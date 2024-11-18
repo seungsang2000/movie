@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import egovframework.kss.main.dto.SingleMovieDTO;
 import egovframework.kss.main.model.Movie;
 import egovframework.kss.main.model.Person;
 import egovframework.kss.main.service.MovieService;
@@ -289,5 +290,29 @@ public class MovieServiceImpl implements MovieService {
 		}
 
 		return persons;
+	}
+
+	@Override
+	public SingleMovieDTO singleMovie(int id, Map<Integer, String> genreMap) {
+		Request request = new Request.Builder().url("https://api.themoviedb.org/3/movie/1034541?append_to_response=videos&language=ko-KR").get().addHeader("accept", "application/json").addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1Njk4OWZmMjMxOGQ4MWRlZTM5YTZhN2E1NjEzNjNhYyIsIm5iZiI6MTczMTkwMTMxNy4yMjA4NDYyLCJzdWIiOiI2NzMyYTRhNjYwN2U4YWEyMGVmNjdiMWEiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.N6xEzYqx7A6JQbWpjIIFRKnXUS8HEL_krVOW-by98d0").build();
+		Response response = null;
+
+		try {
+			response = client.newCall(request).execute();
+			if (response.isSuccessful() && response.body() != null) {
+				String responseBody = response.body().string();
+				System.out.println(responseBody);
+				JSONObject jsonResponse = new JSONObject(responseBody);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			Logger.error(e.getMessage());
+		} finally {
+			if (response != null) {
+				response.close();
+			}
+		}
+
+		return null;
 	}
 }
