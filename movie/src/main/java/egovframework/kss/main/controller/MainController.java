@@ -1,6 +1,5 @@
 package egovframework.kss.main.controller;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,8 +21,7 @@ public class MainController {
 	@RequestMapping(value = "/main.do")
 	public String mainPage(Model model) {
 
-		Map<Integer, String> genreMap = new HashMap<>();
-		movieService.fetchGenres(genreMap); //장르 id와 이름 가져오기
+		Map<Integer, String> genreMap = movieService.fetchGenres(); //장르 id와 이름 가져오기
 
 		List<Movie> movies = movieService.fetchPopularMovies(genreMap); // 인기 영화 정보 가져오기
 		model.addAttribute("popularMovies", movies);
@@ -33,6 +31,9 @@ public class MainController {
 
 		movies = movieService.topRatedMovies(genreMap);
 		model.addAttribute("topRatedMovies", movies);
+
+		movies = movieService.nowPlayingMovies(genreMap);
+		model.addAttribute("nowPlayingMovies", movies);
 
 		List<Person> persons = movieService.popularPeople();
 		model.addAttribute("popularPeople", persons);

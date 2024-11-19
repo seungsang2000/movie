@@ -22,4 +22,5 @@ public class SingleMovieDTO {
 	private int vote_count;
 	private int[] genre_ids;
 	private String[] genre_names;
+
 }

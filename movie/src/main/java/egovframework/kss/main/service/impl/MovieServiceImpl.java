@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import egovframework.kss.main.dto.SingleMovieDTO;
@@ -34,7 +36,9 @@ public class MovieServiceImpl implements MovieService {
 	private static final OkHttpClient client = new OkHttpClient();
 
 	@Override
-	public void fetchGenres(Map<Integer, String> genreMap) {
+	@Cacheable(value = "genreCache")
+	public Map<Integer, String> fetchGenres() {
+		Map<Integer, String> genreMap = new HashMap<>();
 		Request request2 = new Request.Builder().url("https://api.themoviedb.org/3/genre/movie/list?language=ko").get().addHeader("accept", "application/json").addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1Njk4OWZmMjMxOGQ4MWRlZTM5YTZhN2E1NjEzNjNhYyIsIm5iZiI6MTczMTkwMTMxNy4yMjA4NDYyLCJzdWIiOiI2NzMyYTRhNjYwN2U4YWEyMGVmNjdiMWEiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.N6xEzYqx7A6JQbWpjIIFRKnXUS8HEL_krVOW-by98d0").build();
 		Response response2 = null;
 		try {
@@ -59,9 +63,11 @@ public class MovieServiceImpl implements MovieService {
 				response2.close();
 			}
 		}
+		return genreMap;
 	}
 
 	@Override
+	@Cacheable(value = "popularMoviesCache")
 	public List<Movie> fetchPopularMovies(Map<Integer, String> genreMap) {
 		List<Movie> movies = new ArrayList<>();
 		Request request = new Request.Builder().url("https://api.themoviedb.org/3/movie/popular?language=ko-KR&page=1&region=KR").get().addHeader("accept", "application/json").addHeader("Authorization", propertiesService.getString("TMDB.Access.Token")).build();
@@ -130,6 +136,7 @@ public class MovieServiceImpl implements MovieService {
 	}
 
 	@Override
+	@Cacheable(value = "upcomingMoviesCache")
 	public List<Movie> upComingMovies(Map<Integer, String> genreMap) {
 		List<Movie> movies = new ArrayList<>();
 		Request request = new Request.Builder().url("https://api.themoviedb.org/3/movie/upcoming?language=ko&page=1&region=KR").get().addHeader("accept", "application/json").addHeader("Authorization", propertiesService.getString("TMDB.Access.Token")).build();
@@ -192,6 +199,7 @@ public class MovieServiceImpl implements MovieService {
 	}
 
 	@Override
+	@Cacheable(value = "topRatedMoviesCache")
 	public List<Movie> topRatedMovies(Map<Integer, String> genreMap) {
 		List<Movie> movies = new ArrayList<>();
 		Request request = new Request.Builder().url("https://api.themoviedb.org/3/movie/top_rated?language=ko-KR&page=1&region=KR").get().addHeader("accept", "application/json").addHeader("Authorization", propertiesService.getString("TMDB.Access.Token")).build();
@@ -254,6 +262,70 @@ public class MovieServiceImpl implements MovieService {
 	}
 
 	@Override
+	@Cacheable(value = "nowPlayingMoviesCache")
+	public List<Movie> nowPlayingMovies(Map<Integer, String> genreMap) {
+		List<Movie> movies = new ArrayList<>();
+		Request request = new Request.Builder().url("https://api.themoviedb.org/3/movie/now_playing?language=ko-KR&page=1&region=KR").get().addHeader("accept", "application/json").addHeader("Authorization", propertiesService.getString("TMDB.Access.Token")).build();
+
+		Response response = null;
+		try {
+			response = client.newCall(request).execute();
+			if (response.isSuccessful() && response.body() != null) {
+				String responseBody = response.body().string();
+				System.out.println(responseBody);
+				JSONObject jsonResponse = new JSONObject(responseBody);
+				JSONArray results = jsonResponse.getJSONArray("results");
+
+				for (int i = 0; i < results.length(); i++) {
+					try {
+						JSONObject result = results.getJSONObject(i);
+						Movie movie = new Movie();
+						movie.setId(result.getInt("id"));
+						movie.setTitle(result.getString("title"));
+						movie.setOverview(result.getString("overview"));
+						movie.setImg_url("https://image.tmdb.org/t/p/w342" + result.getString("poster_path"));
+						movie.setPopularity(result.getLong("popularity"));
+						movie.setVote_average(roundToFirstDecimal(result.getDouble("vote_average")));
+						movie.setVote_count(result.getInt("vote_count"));
+						movie.setRelease_date(Date.valueOf(result.getString("release_date")));
+
+						JSONArray genreIdsJsonArray = result.getJSONArray("genre_ids");
+						int[] genreIds = new int[genreIdsJsonArray.length()];
+						String[] genreNames = new String[genreIdsJsonArray.length()];
+
+						for (int j = 0; j < genreIdsJsonArray.length(); j++) {
+							int genreId = genreIdsJsonArray.getInt(j);
+							genreIds[j] = genreId;
+							genreNames[j] = genreMap.get(genreId);
+						}
+						movie.setGenre_ids(genreIds);
+						movie.setGenre_names(genreNames);
+
+						movies.add(movie);
+					} catch (Exception e) {
+
+						System.err.println(i + "번째 인덱스에서 에러 발생. 에러 메시지: " + e.getMessage());
+					}
+				}
+
+			} else {
+				System.out.println("응답 에러남");
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			Logger.error(e.getMessage());
+
+		} finally {
+			if (response != null) {
+				response.close();
+			}
+		}
+
+		return movies;
+	}
+
+	@Override
+	@Cacheable(value = "popularPeopleCache")
 	public List<Person> popularPeople() {
 		List<Person> persons = new ArrayList<>();
 		Request request = new Request.Builder().url("https://api.themoviedb.org/3/person/popular?language=ko-KR&page=1").get().addHeader("accept", "application/json").addHeader("Authorization", propertiesService.getString("TMDB.Access.Token")).build();
@@ -296,6 +368,7 @@ public class MovieServiceImpl implements MovieService {
 	public SingleMovieDTO singleMovie(int id, Map<Integer, String> genreMap) {
 		Request request = new Request.Builder().url("https://api.themoviedb.org/3/movie/1034541?append_to_response=videos&language=ko-KR").get().addHeader("accept", "application/json").addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1Njk4OWZmMjMxOGQ4MWRlZTM5YTZhN2E1NjEzNjNhYyIsIm5iZiI6MTczMTkwMTMxNy4yMjA4NDYyLCJzdWIiOiI2NzMyYTRhNjYwN2U4YWEyMGVmNjdiMWEiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.N6xEzYqx7A6JQbWpjIIFRKnXUS8HEL_krVOW-by98d0").build();
 		Response response = null;
+		SingleMovieDTO singleMovie = new SingleMovieDTO();
 
 		try {
 			response = client.newCall(request).execute();

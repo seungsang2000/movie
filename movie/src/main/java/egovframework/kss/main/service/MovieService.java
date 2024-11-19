@@ -9,13 +9,15 @@ import egovframework.kss.main.model.Person;
 
 public interface MovieService {
 
-	void fetchGenres(Map<Integer, String> genreMap);
+	public Map<Integer, String> fetchGenres();
 
 	public List<Movie> fetchPopularMovies(Map<Integer, String> genreMap);
 
 	public List<Movie> upComingMovies(Map<Integer, String> genreMap);
 
 	public List<Movie> topRatedMovies(Map<Integer, String> genreMap);
+
+	public List<Movie> nowPlayingMovies(Map<Integer, String> genreMap);
 
 	public List<Person> popularPeople();
 

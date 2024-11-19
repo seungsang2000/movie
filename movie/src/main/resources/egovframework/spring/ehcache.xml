@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://www.ehcache.org/ehcache.xsd">
+
+    <!-- 기본 캐시 설정 -->
+    <defaultCache
+        maxEntriesLocalHeap="1000"
+        eternal="false"
+        timeToIdleSeconds="3600"  
+        timeToLiveSeconds="3600"   
+        overflowToDisk="false" />
+
+    <cache name="genreCache"
+           maxEntriesLocalHeap="1000" />
+    <cache name="popularMoviesCache"
+           maxEntriesLocalHeap="1000" />
+    <cache name="upcomingMoviesCache"
+           maxEntriesLocalHeap="1000" />
+    <cache name="topRatedMoviesCache"
+           maxEntriesLocalHeap="1000" />
+    <cache name="nowPlayingMoviesCache"
+           maxEntriesLocalHeap="1000" />
+    <cache name="popularPeopleCache"
+           maxEntriesLocalHeap="1000" />
+    
+    
+
+</ehcache>
