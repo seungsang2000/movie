@@ -2,6 +2,9 @@ package egovframework.kss.main.dto;
 
 import java.sql.Date;
 
+import egovframework.kss.main.model.Cast;
+import egovframework.kss.main.model.Genre;
+import egovframework.kss.main.model.Video;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,7 +23,7 @@ public class SingleMovieDTO {
 	private Long popularity;
 	private double vote_average;
 	private int vote_count;
-	private int[] genre_ids;
-	private String[] genre_names;
-
+	private Genre[] genres;
+	private Cast[] casts;
+	private Video[] videos;
 }

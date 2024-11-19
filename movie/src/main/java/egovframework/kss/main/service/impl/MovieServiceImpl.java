@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,8 +20,11 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import egovframework.kss.main.dto.SingleMovieDTO;
+import egovframework.kss.main.model.Cast;
+import egovframework.kss.main.model.Genre;
 import egovframework.kss.main.model.Movie;
 import egovframework.kss.main.model.Person;
+import egovframework.kss.main.model.Video;
 import egovframework.kss.main.service.MovieService;
 import egovframework.rte.fdl.property.EgovPropertyService;
 import okhttp3.OkHttpClient;
@@ -366,7 +371,9 @@ public class MovieServiceImpl implements MovieService {
 
 	@Override
 	public SingleMovieDTO singleMovie(int id, Map<Integer, String> genreMap) {
-		Request request = new Request.Builder().url("https://api.themoviedb.org/3/movie/1034541?append_to_response=videos&language=ko-KR").get().addHeader("accept", "application/json").addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1Njk4OWZmMjMxOGQ4MWRlZTM5YTZhN2E1NjEzNjNhYyIsIm5iZiI6MTczMTkwMTMxNy4yMjA4NDYyLCJzdWIiOiI2NzMyYTRhNjYwN2U4YWEyMGVmNjdiMWEiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.N6xEzYqx7A6JQbWpjIIFRKnXUS8HEL_krVOW-by98d0").build();
+		Logger.debug("----------------영화 상세페이지");
+		Request request = new Request.Builder().url("https://api.themoviedb.org/3/movie/" + id + "?append_to_response=videos,credits&language=ko-KR").get().addHeader("accept", "application/json").addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1Njk4OWZmMjMxOGQ4MWRlZTM5YTZhN2E1NjEzNjNhYyIsIm5iZiI6MTczMTkwMTMxNy4yMjA4NDYyLCJzdWIiOiI2NzMyYTRhNjYwN2U4YWEyMGVmNjdiMWEiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.N6xEzYqx7A6JQbWpjIIFRKnXUS8HEL_krVOW-by98d0").build();
+		System.out.println("요청url : " + request);
 		Response response = null;
 		SingleMovieDTO singleMovie = new SingleMovieDTO();
 
@@ -376,9 +383,80 @@ public class MovieServiceImpl implements MovieService {
 				String responseBody = response.body().string();
 				System.out.println(responseBody);
 				JSONObject jsonResponse = new JSONObject(responseBody);
+
+				singleMovie.setTitle(jsonResponse.getString("title"));
+				singleMovie.setOverview(jsonResponse.getString("overview"));
+				singleMovie.setRelease_date(Date.valueOf(jsonResponse.getString("release_date")));
+				singleMovie.setVote_average(roundToFirstDecimal(jsonResponse.getDouble("vote_average")));
+				singleMovie.setImg_url("https://image.tmdb.org/t/p/w342" + jsonResponse.getString("poster_path"));
+				JSONArray genreArray = jsonResponse.getJSONArray("genres");
+				Genre[] genres = new Genre[genreArray.length()];
+
+				for (int i = 0; i < genreArray.length(); i++) {
+					JSONObject genre = genreArray.getJSONObject(i);
+					genres[i] = new Genre(genre.getInt("id"), genre.getString("name"));
+
+				}
+				singleMovie.setGenres(genres);
+
+				JSONObject credits = jsonResponse.getJSONObject("credits");
+
+				JSONArray castArray = credits.getJSONArray("cast");
+				Cast[] casts = new Cast[castArray.length()];
+
+				for (int i = 0; i < castArray.length(); i++) {
+					JSONObject castObject = castArray.getJSONObject(i);
+					Cast cast = new Cast();
+
+					// 속성 이름과 메소드 매핑
+					Map<String, Consumer<Cast>> propertySetters = new HashMap<>();
+					propertySetters.put("cast_id", c -> c.setCast_id(castObject.getInt("cast_id")));
+					propertySetters.put("id", c -> c.setPerson_id(castObject.getInt("id")));
+					propertySetters.put("order", c -> c.setOrder(castObject.getInt("order")));
+					propertySetters.put("profile_path", c -> c.setImg_url("https://image.tmdb.org/t/p/w300" + castObject.getString("profile_path")));
+					propertySetters.put("name", c -> c.setName(castObject.getString("name")));
+					propertySetters.put("character", c -> c.setCharacter(castObject.getString("character")));
+
+					// 속성 설정
+					for (String property : propertySetters.keySet()) {
+						if (castObject.has(property) && !castObject.isNull(property)) {
+							propertySetters.get(property).accept(cast);
+						}
+					}
+
+					cast.setMovie_id(id); // movie_id는 항상 설정
+					casts[i] = cast;
+
+				}
+				singleMovie.setCasts(casts);
+
+				JSONObject videoResponse = jsonResponse.getJSONObject("videos");
+				JSONArray videoArray = videoResponse.getJSONArray("results");
+				Video[] videos = new Video[videoArray.length()];
+				for (int i = 0; i < videoArray.length(); i++) {
+					try {
+						JSONObject videoObject = videoArray.getJSONObject(i);
+						Video video = new Video();
+						video.setMovieId(id);
+						video.setId(videoObject.getString("id"));
+						video.setKey(videoObject.getString("key"));
+						video.setName(videoObject.getString("name"));
+						String publishedAtString = videoObject.getString("published_at");
+						// T를 공백으로 바꾸고 Z를 제거
+						publishedAtString = publishedAtString.replace("T", " ").replace("Z", "");
+						video.setPublished_at(Timestamp.valueOf(publishedAtString.substring(0, 19)));
+						video.setSite(videoObject.getString("site"));
+
+						videos[i] = video;
+					} catch (Exception e) {
+						System.out.println(e.getMessage());
+					}
+
+				}
+				singleMovie.setVideos(videos);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+
 			Logger.error(e.getMessage());
 		} finally {
 			if (response != null) {
@@ -386,6 +464,6 @@ public class MovieServiceImpl implements MovieService {
 			}
 		}
 
-		return null;
+		return singleMovie;
 	}
 }
