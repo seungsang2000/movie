@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import egovframework.kss.main.exception.CustomException;
 import egovframework.kss.main.model.Movie;
 import egovframework.kss.main.model.Person;
 import egovframework.kss.main.service.MovieService;
@@ -39,6 +41,27 @@ public class MainController {
 		model.addAttribute("popularPeople", persons);
 
 		return "home";
+	}
+
+	@RequestMapping("/search.do")
+	public String search(@RequestParam("type") String type, @RequestParam("query") String query, Model model) {
+
+		model.addAttribute("query", query);
+
+		if (type.equals("movie")) {
+			return "movieSearch";
+		} else if (type.equals("person")) {
+			return "personSearch";
+		} else {
+			throw new CustomException("검색에 오류가 발생했습니다.");
+		}
+
+	}
+
+	@RequestMapping(value = "/errorPage.do")
+	public String errorPage(@RequestParam(required = false) String error, Model model) {
+		model.addAttribute("error", error);
+		return "errorPage";
 	}
 
 }

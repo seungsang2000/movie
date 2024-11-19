@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -233,13 +232,16 @@
 			</nav>
 
 			<!-- top search form -->
+			<form action="/search.do" method="GET">
 			<div class="top-search">
-				<select>
+
+				<select name="type">
 					<option value="movie">영화</option>
 					<option value="person">인물</option>
-				</select> <input type="text"
-					placeholder="검색어를 입력해주세요">
+				</select> <input type="text" name="query" placeholder="검색어를 입력해주세요" required>
+
 			</div>
+			</form>
 		</div>
 	</header>
 	<!-- END | Header -->

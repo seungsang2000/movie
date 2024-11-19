@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import javax.annotation.PreDestroy;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -465,5 +467,10 @@ public class MovieServiceImpl implements MovieService {
 		}
 
 		return singleMovie;
+	}
+
+	@PreDestroy
+	public void cleanup() {
+		client.connectionPool().evictAll(); // 연결 풀 비우기
 	}
 }
