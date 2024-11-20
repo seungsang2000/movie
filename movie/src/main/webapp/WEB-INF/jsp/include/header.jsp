@@ -64,7 +64,7 @@
 				<div class="row">
 					<label for="password"> Password: <input type="password"
 						name="password" id="password" placeholder="******"
-						pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
+						pattern="^[a-zA-Z\d\W]{8,20}$"
 						required="required" />
 					</label>
 				</div>
@@ -99,29 +99,26 @@
 			<form method="post" action="#">
 				<div class="row">
 					<label for="username-2"> Username: <input type="text"
-						name="username" id="username-2" placeholder="Hugh Jackman"
+						name="username" id="username-2" placeholder="movie"
 						pattern="^[a-zA-Z][a-zA-Z0-9-_\.]{8,20}$" required="required" />
 					</label>
 				</div>
 
 				<div class="row">
-					<label for="email-2"> your email: <input type="password"
-						name="email" id="email-2" placeholder=""
-						pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
-						required="required" />
+					<label for="email-2"> your email: <input type="email" name="email" id="email-2" placeholder="movie@movie.com" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" required="required" />
 					</label>
 				</div>
 				<div class="row">
 					<label for="password-2"> Password: <input type="password"
 						name="password" id="password-2" placeholder=""
-						pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
+						pattern="^[a-zA-Z\d\W]{8,20}$"
 						required="required" />
 					</label>
 				</div>
 				<div class="row">
 					<label for="repassword-2"> re-type Password: <input
 						type="password" name="password" id="repassword-2" placeholder=""
-						pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
+						pattern="^[a-zA-Z\d\W]{8,20}$"
 						required="required" />
 					</label>
 				</div>
