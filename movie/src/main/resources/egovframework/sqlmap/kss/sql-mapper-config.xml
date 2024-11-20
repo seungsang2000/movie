@@ -7,6 +7,6 @@
     </typeAliases>
     
     <mappers>
-        <mapper class="egovframework.kss.main.mapper.QnAMapper"/>
+        <!-- <mapper class="egovframework.kss.main.mapper.QnAMapper"/> -->
     </mappers>
 </configuration>
