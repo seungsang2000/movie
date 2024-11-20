@@ -22,8 +22,8 @@
 					<img src="${movie.img_url}" alt="">
 					<div class="movie-btn">	
 						<div class="btn-transform transform-vertical red">
-							<div><a href="#" class="item item-1 redbtn"> <i class="ion-play"></i> Watch Trailer</a></div>
-							<div><a href="https://www.youtube.com/embed/o-0hcF97wy0" class="item item-2 redbtn fancybox-media hvr-grow"><i class="ion-play"></i></a></div>
+							<div><a href="#" class="item item-1 redbtn"> <i class="ion-play"></i> 예고편 시청</a></div>
+							<div><a href="https://www.youtube.com/embed/${movie.trailer}" class="item item-2 redbtn fancybox-media hvr-grow"><i class="ion-play"></i></a></div>
 						</div>
 						<div class="btn-transform transform-vertical">
 							<div><a href="#" class="item item-1 yellowbtn"> <i class="ion-card"></i> Buy ticket</a></div>
@@ -67,21 +67,24 @@
 						            	<div class="col-md-8 col-sm-12 col-xs-12">
 						            		<p> ${movie.overview}</p>
 						            		<div class="title-hd-sm">
-												<h4>Videos & Photos</h4>
-												<a href="#" class="time">All 5 Videos & 245 Photos <i class="ion-ios-arrow-right"></i></a>
+												<h4>사진 & 동영상</h4>
+												<a href="#" id="allVideosPhotos" class="time">All ${fn:length(movie.videos)} Videos & ${fn:length(movie.image_urls)} Photos <i class="ion-ios-arrow-right"></i></a>
 											</div>
 											<div class="mvsingle-item ov-item">
-												<a class="img-lightbox"  data-fancybox-group="gallery" href="images/uploads/image11.jpg" ><img src="images/uploads/image1.jpg" alt=""></a>
+												<c:forEach var="media" items="${movie.image_urls}" varStatus="status" begin="0" end="3">
+												<a class="img-lightbox"  data-fancybox-group="gallery" href="${media}" ><img src="${media}" alt="" style="height: 100px; width: 100px; object-fit: cover;"></a>
+												</c:forEach>
+												<!-- <a class="img-lightbox"  data-fancybox-group="gallery" href="images/uploads/image11.jpg" ><img src="images/uploads/image1.jpg" alt=""></a>
 												<a class="img-lightbox"  data-fancybox-group="gallery" href="images/uploads/image21.jpg" ><img src="images/uploads/image2.jpg" alt=""></a>
 												<a class="img-lightbox"  data-fancybox-group="gallery" href="images/uploads/image31.jpg" ><img src="images/uploads/image3.jpg" alt=""></a>
 												<div class="vd-it">
 													<img class="vd-img" src="images/uploads/image4.jpg" alt="">
 													<a class="fancybox-media hvr-grow" href="https://www.youtube.com/embed/o-0hcF97wy0"><img src="images/uploads/play-vd.png" alt=""></a>
-												</div>
+												</div> -->
 											</div>
 											<div class="title-hd-sm">
-												<h4>cast</h4>
-												<a href="#" class="time">Full Cast & Crew  <i class="ion-ios-arrow-right"></i></a>
+												<h4>배우</h4>
+												<a href="#" id="allCastCrew" class="time">Full Cast & Crew  <i class="ion-ios-arrow-right"></i></a>
 											</div>
 											<!-- movie cast -->
 											<div class="mvcast-item">	
@@ -124,51 +127,53 @@
 						            	</div>
 						            	<div class="col-md-4 col-xs-12 col-sm-12">
 						            		<div class="sb-it">
-						            			<h6>Director: </h6>
-						            			<p><a href="#">Joss Whedon</a></p>
+						            			<h6>감독: </h6>											
+						            			<p>
+						            			<c:forEach var="crew" items="${movie.crews}" varStatus="status">
+											<c:if test="${crew.job == 'Director'}">	
+						            			<a href="/singlePerson?id=${crew.person_id}">${crew.name}
+						            			
+						            			</a>
+						            			</c:if>
+						            		</c:forEach>						            			
+						            			</p> 		
 						            		</div>
 						            		<div class="sb-it">
-						            			<h6>Writer: </h6>
-						            			<p><a href="#">Joss Whedon,</a> <a href="#">Stan Lee</a></p>
-						            		</div>
-						            		<div class="sb-it">
-						            			<h6>Stars: </h6>
-						            			<p><a href="#">Robert Downey Jr,</a> <a href="#">Chris Evans,</a> <a href="#">Mark Ruffalo,</a><a href="#"> Scarlett Johansson</a></p>
+						            			<h6>작가진: </h6>
+						            			<p>
+						            			<c:forEach var="crew" items="${movie.crews}" varStatus="status">
+												<c:if test="${crew.department == 'Writing'}">	
+						            			<a href="/singlePerson?id=${crew.person_id}">${crew.name}</a>
+						            			<c:if test="${!status.last}">, </c:if>
+						            			</c:if>
+						            			</c:forEach>
+						            			</p>
 						            		</div>
 						            		<div class="sb-it">
 						            			<h6>Genres:</h6>
-						            			<p>
+						            			<p class="tags">
 						            			<c:forEach var="Genre" items="${movie.genres}"  varStatus="status">
-						            			<a href="/searchGenre?id=${Genre.id}">${Genre.name}</a> 
+						            			<span class="time"><a href="/searchGenre?id=${Genre.id}">${Genre.name}</a></span>
 						            			<c:if test="${!status.last}">, </c:if>
 						            			</c:forEach>
 						            			</p>
 						            		</div>
 						            		<div class="sb-it">
-						            			<h6>Release Date:</h6>
-						            			<p>May 1, 2015 (U.S.A)</p>
+						            			<h6>개봉일:</h6>
+						            			<p><fmt:formatDate value="${movie.release_date}" pattern="yyyy년 MM월 dd일" /></p>
 						            		</div>
 						            		<div class="sb-it">
-						            			<h6>Run Time:</h6>
-						            			<p>141 min</p>
+						            			<h6>상영시간:</h6>
+						            			<p>${movie.runtime} 분</p>
 						            		</div>
 						            		<div class="sb-it">
 						            			<h6>MMPA Rating:</h6>
 						            			<p>PG-13</p>
 						            		</div>
-						            		<div class="sb-it">
-						            			<h6>Plot Keywords:</h6>
-						            			<p class="tags">
-						            				<span class="time"><a href="#">superhero</a></span>
-													<span class="time"><a href="#">marvel universe</a></span>
-													<span class="time"><a href="#">comic</a></span>
-													<span class="time"><a href="#">blockbuster</a></span>
-													<span class="time"><a href="#">final battle</a></span>
-						            			</p>
-						            		</div>
-						            		<div class="ads">
+						            		
+						            		<!-- <div class="ads">
 												<img src="images/uploads/ads1.png" alt="">
-											</div>
+											</div> -->
 						            	</div>
 						            </div>
 						        </div>
@@ -357,135 +362,58 @@
 					       	 			<h2>${movie.title}</h2>
 										<!-- //== -->
 					       	 			<div class="title-hd-sm">
-											<h4>Directors & Credit Writers</h4>
+											<h4>감독</h4>
 										</div>
 										<div class="mvcast-item">
 										 	<c:forEach var="crew" items="${movie.crews}">
-        										<c:if test="${crew.department == 'Directing'}">											
+        										<c:if test="${crew.job == 'Director'}">											
 											<div class="cast-it">
 												<div class="cast-left">
 													<img src="${crew.img_url}" alt="" style="height: 50px; width: 50px; object-fit: cover;">
 													<a href="/singlePerson?id=${crew.person_id}">${crew.name}</a>
 												</div>
-												<p>...  {crew.job}</p>
+												<p>...  ${crew.job}</p>
 											</div>
 											</c:if>
 											</c:forEach>
 										</div>
 										<!-- //== -->
 										<div class="title-hd-sm">
-											<h4>Directors & Credit Writers</h4>
+											<h4>배우</h4>
+										</div>
+										<div class="mvcast-item">
+										<c:forEach var="cast" items="${movie.casts}" varStatus="status">
+    											<c:if test="${status.index < 10}">
+       												<div class="cast-it">
+            										<div class="cast-left">
+                										<img src="${cast.img_url}" alt="" style="height: 50px; width: 50px; object-fit: cover;">
+                										<a href="/singlePerson?id=${cast.person_id}">${cast.name}</a>
+            										</div>
+            										<p>... ${cast.character}</p>
+        											</div>
+    											</c:if>
+											</c:forEach>											
+										</div>
+										<!-- //== -->
+										<div class="title-hd-sm">
+											<h4>스태프</h4>
 										</div>
 										<div class="mvcast-item">		
 										<c:forEach var="crew" items="${movie.crews}">
-        										<c:if test="${crew.department != 'Directing'}">										
+										<c:if test="${crew.job != 'Director'}">		
+        										<c:if test="${crew.department == 'Directing' || crew.department == 'Writing' || crew.department == 'Production'}">										
 											<div class="cast-it">
 												<div class="cast-left">
 													<img src="${crew.img_url}" alt="" style="height: 50px; width: 50px; object-fit: cover;">
 													<a href="/singlePerson?id=${crew.person_id}">${crew.name}</a>
 												</div>
-												<p>...  {crew.job}</p>
+												<p>...  ${crew.job}</p>
 											</div>
 											</c:if>
-											</c:forEach>
-											<!-- <div class="cast-it">
-												<div class="cast-left">
-													<h4>JK</h4>
-													<a href="#">Jack Kirby</a>
-												</div>
-												<p>...  (based on Marvel comics)</p>
-											</div>
-											<div class="cast-it">
-												<div class="cast-left">
-													<h4>JS</h4>
-													<a href="#">Joe Simon</a>
-												</div>
-												<p>...  (character created by: Captain America)</p>
-											</div>
-											<div class="cast-it">
-												<div class="cast-left">
-													<h4>JS</h4>
-													<a href="#">Joe Simon</a>
-												</div>
-												<p>...  (character created by: Thanos)</p>
-											</div>
-											<div class="cast-it">
-												<div class="cast-left">
-													<h4>RT</h4>
-													<a href="#">Roy Thomas</a>
-												</div>
-												<p>...  (character created by: Ultron, Vision)</p>
-											</div>
-											<div class="cast-it">
-												<div class="cast-left">
-													<h4>JB</h4>
-													<a href="#">John Buscema</a>
-												</div>
-												<p>...  (character created by: Ultron, Vision)</p>
-											</div> -->
+											</c:if>
+											</c:forEach>		
 										</div>
-										<!-- //== -->
-										<div class="title-hd-sm">
-											<h4>Cast</h4>
-										</div>
-										<div class="mvcast-item">											
-											<div class="cast-it">
-												<div class="cast-left">
-													<img src="images/uploads/cast1.jpg" alt="">
-													<a href="#">Robert Downey Jr.</a>
-												</div>
-												<p>...  Robert Downey Jr.</p>
-											</div>
-											<div class="cast-it">
-												<div class="cast-left">
-													<img src="images/uploads/cast2.jpg" alt="">
-													<a href="#">Chris Hemsworth</a>
-												</div>
-												<p>...  Thor</p>
-											</div>
-											<div class="cast-it">
-												<div class="cast-left">
-													<img src="images/uploads/cast3.jpg" alt="">
-													<a href="#">Mark Ruffalo</a>
-												</div>
-												<p>...  Bruce Banner/ Hulk</p>
-											</div>
-											<div class="cast-it">
-												<div class="cast-left">
-													<img src="images/uploads/cast4.jpg" alt="">
-													<a href="#">Chris Evans</a>
-												</div>
-												<p>...  Steve Rogers/ Captain America</p>
-											</div>
-											<div class="cast-it">
-												<div class="cast-left">
-													<img src="images/uploads/cast5.jpg" alt="">
-													<a href="#">Scarlett Johansson</a>
-												</div>
-												<p>...  Natasha Romanoff/ Black Widow</p>
-											</div>
-											<div class="cast-it">
-												<div class="cast-left">
-													<img src="images/uploads/cast6.jpg" alt="">
-													<a href="#">Jeremy Renner</a>
-												</div>
-												<p>...  Clint Barton/ Hawkeye</p>
-											</div>
-											<div class="cast-it">
-												<div class="cast-left">
-													<img src="images/uploads/cast7.jpg" alt="">
-													<a href="#">James Spader</a>
-												</div>
-												<p>...  Ultron</p>
-											</div>
-											<div class="cast-it">
-												<div class="cast-left">
-													<img src="images/uploads/cast9.jpg" alt="">
-													<a href="#">Don Cheadle</a>
-												</div>
-												<p>...  James Rhodes/ War Machine</p>
-											</div>
-										</div>
+										
 										<!-- //== -->
 										<div class="title-hd-sm">
 											<h4>Produced by</h4>
@@ -554,12 +482,12 @@
 						        	<div class="row">
 						        		<div class="rv-hd">
 						            		<div>
-						            			<h3>Videos & Photos of</h3>
-					       	 					<h2>Skyfall: Quantum of Spectre</h2>
+					       	 					<h2>${movie.title}</h2>
+					       	 					<h3> 동영상 & 사진</h3>
 						            		</div>
 						            	</div>
 						            	<div class="title-hd-sm">
-											<h4>Videos <span>(${fn:length(movie.videos)})</span></h4>
+											<h4>동영상 <span>(${fn:length(movie.videos)})</span></h4>
 										</div>
 										<div class="mvsingle-item media-item">
 											<c:forEach var="video" items="${movie.videos}">
@@ -576,31 +504,13 @@
 											</c:forEach>
 										</div>
 										<div class="title-hd-sm">
-											<h4>Photos <span> (21)</span></h4>
+											<h4>사진 <span>(${fn:length(movie.image_urls)})</span></h4>
 										</div>
 										<div class="mvsingle-item">
-											<a class="img-lightbox"  data-fancybox-group="gallery" href="images/uploads/image11.jpg" ><img src="images/uploads/image1.jpg" alt=""></a>
-											<a class="img-lightbox"  data-fancybox-group="gallery"  href="images/uploads/image21.jpg" ><img src="images/uploads/image2.jpg" alt=""></a>
-											<a class="img-lightbox"  data-fancybox-group="gallery" href="images/uploads/image31.jpg" ><img src="images/uploads/image3.jpg" alt=""></a>
-											<a class="img-lightbox"  data-fancybox-group="gallery" href="images/uploads/image41.jpg" ><img src="images/uploads/image4.jpg" alt=""></a>
-											<a class="img-lightbox"  data-fancybox-group="gallery" href="images/uploads/image51.jpg" ><img src="images/uploads/image5.jpg" alt=""></a>
-											<a class="img-lightbox"  data-fancybox-group="gallery" href="images/uploads/image61.jpg" ><img src="images/uploads/image6.jpg" alt=""></a>
-											<a class="img-lightbox"  data-fancybox-group="gallery" href="images/uploads/image71.jpg" ><img src="images/uploads/image7.jpg" alt=""></a>
-											<a class="img-lightbox"  data-fancybox-group="gallery" href="images/uploads/image81.jpg" ><img src="images/uploads/image8.jpg" alt=""></a>
-											<a class="img-lightbox"  data-fancybox-group="gallery" href="images/uploads/image91.jpg" ><img src="images/uploads/image9.jpg" alt=""></a>
-											<a class="img-lightbox"  data-fancybox-group="gallery" href="images/uploads/image101.jpg" ><img src="images/uploads/image10.jpg" alt=""></a>
-											<a class="img-lightbox"  data-fancybox-group="gallery" href="images/uploads/image111.jpg" ><img src="images/uploads/image1-1.jpg" alt=""></a>
-											<a class="img-lightbox"  data-fancybox-group="gallery" href="images/uploads/image121.jpg" ><img src="images/uploads/image12.jpg" alt=""></a>
-											<a class="img-lightbox"  data-fancybox-group="gallery" href="images/uploads/image131.jpg" ><img src="images/uploads/image13.jpg" alt=""></a>
-											<a class="img-lightbox"  data-fancybox-group="gallery" href="images/uploads/image141.jpg" ><img src="images/uploads/image14.jpg" alt=""></a>
-											<a class="img-lightbox"  data-fancybox-group="gallery" href="images/uploads/image151.jpg" ><img src="images/uploads/image15.jpg" alt=""></a>
-											<a class="img-lightbox"  data-fancybox-group="gallery" href="images/uploads/image161.jpg" ><img src="images/uploads/image16.jpg" alt=""></a>
-											<a class="img-lightbox"  data-fancybox-group="gallery" href="images/uploads/image171.jpg" ><img src="images/uploads/image17.jpg" alt=""></a>
-											<a class="img-lightbox"  data-fancybox-group="gallery" href="images/uploads/image181.jpg" ><img src="images/uploads/image18.jpg" alt=""></a>
-											<a class="img-lightbox"  data-fancybox-group="gallery" href="images/uploads/image191.jpg" ><img src="images/uploads/image19.jpg" alt=""></a>
-											<a class="img-lightbox"  data-fancybox-group="gallery" href="images/uploads/image201.jpg" ><img src="images/uploads/image20.jpg" alt=""></a>
-											<a class="img-lightbox"  data-fancybox-group="gallery" href="images/uploads/image211.jpg" ><img src="images/uploads/image2-1.jpg" alt=""></a>
-										</div>
+										<c:forEach var="image_url" items="${movie.image_urls}">
+											<a class="img-lightbox"  data-fancybox-group="gallery" href="${image_url}" ><img src="${image_url}" alt="" style="height: 100px; width: 100px; object-fit: cover;"></a>
+										</c:forEach>
+											</div>
 						        	</div>
 					       	 	</div>
 					       	 	<div id="moviesrelated" class="tab">
@@ -697,4 +607,28 @@
 		</div>
 	</div>
 </div>
+
+<style>
+.mv-single-hero {
+  background: url('../images/uploads/hero-bg.jpg') no-repeat;
+  height: 598px;
+}
+</style>
+
+<script>
+    $(function() {
+        $("#allVideosPhotos").click(function(e) {
+            e.preventDefault(); 
+            
+
+            $("a[href='#media']").click();
+        });
+        
+        $("#allCastCrew").click(function(e){
+            e.preventDefault();
+             
+            $("a[href='#cast']").click();
+         });
+    });
+</script>
 <%@ include file="/WEB-INF/jsp/include/footer.jsp" %>

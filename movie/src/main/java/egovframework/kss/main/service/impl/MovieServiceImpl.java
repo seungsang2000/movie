@@ -380,7 +380,7 @@ public class MovieServiceImpl implements MovieService {
 	}
 
 	@Override
-	public SingleMovieDTO singleMovie(int id, Map<Integer, String> genreMap) {
+	public SingleMovieDTO movieDetail(int id, Map<Integer, String> genreMap) {
 		Request request = new Request.Builder().url("https://api.themoviedb.org/3/movie/" + id + "?append_to_response=videos,credits&language=ko-KR").get().addHeader("accept", "application/json").addHeader("Authorization", propertiesService.getString("TMDB.Access.Token")).build();
 		Response response = null;
 		SingleMovieDTO singleMovie = new SingleMovieDTO();
@@ -393,6 +393,7 @@ public class MovieServiceImpl implements MovieService {
 				JSONObject jsonResponse = new JSONObject(responseBody);
 
 				singleMovie.setTitle(jsonResponse.getString("title"));
+				singleMovie.setRuntime(jsonResponse.getInt("runtime"));
 				singleMovie.setOverview(jsonResponse.getString("overview"));
 				singleMovie.setRelease_date(Date.valueOf(jsonResponse.getString("release_date")));
 				singleMovie.setVote_average(roundToFirstDecimal(jsonResponse.getDouble("vote_average")));
@@ -402,7 +403,7 @@ public class MovieServiceImpl implements MovieService {
 
 				for (int i = 0; i < genreArray.length(); i++) {
 					JSONObject genre = genreArray.getJSONObject(i);
-					genres[i] = new Genre(genre.getInt("id"), genre.getString("name"));
+					genres[i] = new Genre(genre.getInt("id"), id, genre.getString("name"));
 
 				}
 				singleMovie.setGenres(genres);
@@ -470,15 +471,20 @@ public class MovieServiceImpl implements MovieService {
 				JSONObject videoResponse = jsonResponse.getJSONObject("videos");
 				JSONArray videoArray = videoResponse.getJSONArray("results");
 				Video[] videos = new Video[videoArray.length()];
+				boolean selectTrailer = false;
 				for (int i = 0; i < videoArray.length(); i++) {
 					try {
 						JSONObject videoObject = videoArray.getJSONObject(i);
 						Video video = new Video();
-						video.setMovieId(id);
+						video.setMovie_id(id);
 						video.setId(videoObject.getString("id"));
 						video.setKey(videoObject.getString("key"));
 						video.setName(videoObject.getString("name"));
 						String publishedAtString = videoObject.getString("published_at");
+						if (!selectTrailer && videoObject.getString("type").equals("Trailer")) {
+							singleMovie.setTrailer(videoObject.getString("key"));
+							selectTrailer = true;
+						}
 						// T를 공백으로 바꾸고 Z를 제거
 						publishedAtString = publishedAtString.replace("T", " ").replace("Z", "");
 						video.setPublished_at(Timestamp.valueOf(publishedAtString.substring(0, 19)));
@@ -491,6 +497,38 @@ public class MovieServiceImpl implements MovieService {
 
 				}
 				singleMovie.setVideos(videos);
+
+			}
+		} catch (IOException e) {
+
+			Logger.error(e.getMessage());
+		} finally {
+			if (response != null) {
+				response.close();
+			}
+		}
+
+		request = new Request.Builder().url("https://api.themoviedb.org/3/movie/" + id + "/images?include_image_language=ko&language=ko").get().addHeader("accept", "application/json").addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1Njk4OWZmMjMxOGQ4MWRlZTM5YTZhN2E1NjEzNjNhYyIsIm5iZiI6MTczMTk4ODYyMS4wMTczNzE3LCJzdWIiOiI2NzMyYTRhNjYwN2U4YWEyMGVmNjdiMWEiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.rzPvwXmyx-l1lO8pY033zhkWFZlrue83qS0dJtMwXmo").build();
+		try {
+			response = client.newCall(request).execute();
+			if (response.isSuccessful() && response.body() != null) {
+				String responseBody = response.body().string();
+				System.out.println(responseBody);
+				JSONObject jsonResponse = new JSONObject(responseBody);
+				JSONArray backdrops = jsonResponse.getJSONArray("backdrops");
+				if (backdrops.length() >= 1) {
+					String backdrop_url = "https://image.tmdb.org/t/p/original" + backdrops.getJSONObject(0).getString("file_path");
+					singleMovie.setBackdrop_url(backdrop_url);
+				}
+
+				JSONArray imageArray = jsonResponse.getJSONArray("posters");
+				String[] images = new String[imageArray.length()];
+				for (int i = 0; i < imageArray.length(); i++) {
+					JSONObject imageObject = imageArray.getJSONObject(i);
+					String image = "https://image.tmdb.org/t/p/w500" + imageObject.getString("file_path");
+					images[i] = image;
+				}
+				singleMovie.setImage_urls(images);
 			}
 		} catch (IOException e) {
 

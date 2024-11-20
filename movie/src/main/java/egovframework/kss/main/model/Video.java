@@ -17,5 +17,5 @@ public class Video {
 	private String name;
 	private String site;
 	private Timestamp published_at;
-	private int movieId;
+	private int movie_id;
 }

@@ -23,7 +23,7 @@ public interface MovieService {
 
 	public List<Person> popularPeople();
 
-	public SingleMovieDTO singleMovie(int id, Map<Integer, String> genreMap);
+	public SingleMovieDTO movieDetail(int id, Map<Integer, String> genreMap);
 
 	public MovieSearchResultDTO movieSearch(int page, String query);
 

@@ -20,7 +20,7 @@ public class MovieController {
 	public String singleMovie(@RequestParam("id") int id, Model model) {
 
 		Map<Integer, String> genreMap = movieService.fetchGenres(); //장르 id와 이름 가져오기
-		SingleMovieDTO singlemovie = movieService.singleMovie(id, genreMap);
+		SingleMovieDTO singlemovie = movieService.movieDetail(id, genreMap);
 		model.addAttribute("movie", singlemovie);
 		return "singleMovie";
 	}

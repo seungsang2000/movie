@@ -17,6 +17,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SingleMovieDTO {
 	private int id;
+	private int runtime;
+	private String trailer;
 	private String title;
 	private String overview;
 	private String img_url;
@@ -28,4 +30,6 @@ public class SingleMovieDTO {
 	private Cast[] casts;
 	private Video[] videos;
 	private Crew[] crews;
+	private String backdrop_url;
+	private String[] image_urls;
 }
