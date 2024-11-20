@@ -85,14 +85,16 @@
 											</div>
 											<!-- movie cast -->
 											<div class="mvcast-item">	
-											<c:forEach var="cast" items="${movie.casts}">									
-												<div class="cast-it">
-													<div class="cast-left">
-														<img src="${cast.img_url}" alt="" style="height : 50px; weight:50px; object-fit: cover;">
-														<a href="/singlePerson?id=${cast.person_id}">${cast.name}</a>
-													</div>
-													<p>...  ${cast.character}</p>
-												</div>
+											<c:forEach var="cast" items="${movie.casts}" varStatus="status">
+    											<c:if test="${status.index < 10}">
+       												<div class="cast-it">
+            										<div class="cast-left">
+                										<img src="${cast.img_url}" alt="" style="height: 50px; width: 50px; object-fit: cover;">
+                										<a href="/singlePerson?id=${cast.person_id}">${cast.name}</a>
+            										</div>
+            										<p>... ${cast.character}</p>
+        											</div>
+    											</c:if>
 											</c:forEach>
 											</div>
 											<div class="title-hd-sm">
@@ -352,33 +354,41 @@
 						        <div id="cast" class="tab">
 						        	<div class="row">
 						            	<h3>Cast & Crew of</h3>
-					       	 			<h2>Avengers: Age of Ultron</h2>
+					       	 			<h2>${movie.title}</h2>
 										<!-- //== -->
 					       	 			<div class="title-hd-sm">
 											<h4>Directors & Credit Writers</h4>
 										</div>
-										<div class="mvcast-item">											
+										<div class="mvcast-item">
+										 	<c:forEach var="crew" items="${movie.crews}">
+        										<c:if test="${crew.department == 'Directing'}">											
 											<div class="cast-it">
 												<div class="cast-left">
-													<h4>JW</h4>
-													<a href="#">Joss Whedon</a>
+													<img src="${crew.img_url}" alt="" style="height: 50px; width: 50px; object-fit: cover;">
+													<a href="/singlePerson?id=${crew.person_id}">${crew.name}</a>
 												</div>
-												<p>...  Director</p>
+												<p>...  {crew.job}</p>
 											</div>
+											</c:if>
+											</c:forEach>
 										</div>
 										<!-- //== -->
 										<div class="title-hd-sm">
 											<h4>Directors & Credit Writers</h4>
 										</div>
-										<div class="mvcast-item">											
+										<div class="mvcast-item">		
+										<c:forEach var="crew" items="${movie.crews}">
+        										<c:if test="${crew.department != 'Directing'}">										
 											<div class="cast-it">
 												<div class="cast-left">
-													<h4>SL</h4>
-													<a href="#">Stan Lee</a>
+													<img src="${crew.img_url}" alt="" style="height: 50px; width: 50px; object-fit: cover;">
+													<a href="/singlePerson?id=${crew.person_id}">${crew.name}</a>
 												</div>
-												<p>...  (based on Marvel comics)</p>
+												<p>...  {crew.job}</p>
 											</div>
-											<div class="cast-it">
+											</c:if>
+											</c:forEach>
+											<!-- <div class="cast-it">
 												<div class="cast-left">
 													<h4>JK</h4>
 													<a href="#">Jack Kirby</a>
@@ -412,7 +422,7 @@
 													<a href="#">John Buscema</a>
 												</div>
 												<p>...  (character created by: Ultron, Vision)</p>
-											</div>
+											</div> -->
 										</div>
 										<!-- //== -->
 										<div class="title-hd-sm">
@@ -687,70 +697,4 @@
 		</div>
 	</div>
 </div>
-<!-- footer section-->
-<footer class="ht-footer">
-	<div class="container">
-		<div class="flex-parent-ft">
-			<div class="flex-child-ft item1">
-				 <a href="index-2.html"><img class="logo" src="images/logo1.png" alt=""></a>
-				 <p>5th Avenue st, manhattan<br>
-				New York, NY 10001</p>
-				<p>Call us: <a href="#">(+01) 202 342 6789</a></p>
-			</div>
-			<div class="flex-child-ft item2">
-				<h4>Resources</h4>
-				<ul>
-					<li><a href="#">About</a></li> 
-					<li><a href="#">Blockbuster</a></li>
-					<li><a href="#">Contact Us</a></li>
-					<li><a href="#">Forums</a></li>
-					<li><a href="#">Blog</a></li>
-					<li><a href="#">Help Center</a></li>
-				</ul>
-			</div>
-			<div class="flex-child-ft item3">
-				<h4>Legal</h4>
-				<ul>
-					<li><a href="#">Terms of Use</a></li> 
-					<li><a href="#">Privacy Policy</a></li>	
-					<li><a href="#">Security</a></li>
-				</ul>
-			</div>
-			<div class="flex-child-ft item4">
-				<h4>Account</h4>
-				<ul>
-					<li><a href="#">My Account</a></li> 
-					<li><a href="#">Watchlist</a></li>	
-					<li><a href="#">Collections</a></li>
-					<li><a href="#">User Guide</a></li>
-				</ul>
-			</div>
-			<div class="flex-child-ft item5">
-				<h4>Newsletter</h4>
-				<p>Subscribe to our newsletter system now <br> to get latest news from us.</p>
-				<form action="#">
-					<input type="text" placeholder="Enter your email...">
-				</form>
-				<a href="#" class="btn">Subscribe now <i class="ion-ios-arrow-forward"></i></a>
-			</div>
-		</div>
-	</div>
-	<div class="ft-copyright">
-		<div class="ft-left">
-			<p><a target="_blank" href="https://www.templateshub.net">Templates Hub</a></p>
-		</div>
-		<div class="backtotop">
-			<p><a href="#" id="back-to-top">Back to top  <i class="ion-ios-arrow-thin-up"></i></a></p>
-		</div>
-	</div>
-</footer>
-<!-- end of footer section-->
-
-<script src="js/jquery.js"></script>
-<script src="js/plugins.js"></script>
-<script src="js/plugins2.js"></script>
-<script src="js/custom.js"></script>
-</body>
-
-<!-- moviesingle11:03-->
-</html>
+<%@ include file="/WEB-INF/jsp/include/footer.jsp" %>

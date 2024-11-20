@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import egovframework.kss.main.dto.MovieSearchResultDTO;
 import egovframework.kss.main.exception.CustomException;
 import egovframework.kss.main.model.Movie;
 import egovframework.kss.main.model.Person;
@@ -44,11 +45,13 @@ public class MainController {
 	}
 
 	@RequestMapping("/search.do")
-	public String search(@RequestParam("type") String type, @RequestParam("query") String query, Model model) {
+	public String search(@RequestParam("type") String type, @RequestParam("query") String query, @RequestParam(value = "page", defaultValue = "1") int page, Model model) {
 
 		model.addAttribute("query", query);
-
+		model.addAttribute("page", page);
 		if (type.equals("movie")) {
+			MovieSearchResultDTO searchResult = movieService.movieSearch(page, query);
+			model.addAttribute("searchResult", searchResult);
 			return "movieSearch";
 		} else if (type.equals("person")) {
 			return "personSearch";

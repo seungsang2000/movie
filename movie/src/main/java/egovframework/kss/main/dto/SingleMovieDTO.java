@@ -3,6 +3,7 @@ package egovframework.kss.main.dto;
 import java.sql.Date;
 
 import egovframework.kss.main.model.Cast;
+import egovframework.kss.main.model.Crew;
 import egovframework.kss.main.model.Genre;
 import egovframework.kss.main.model.Video;
 import lombok.AllArgsConstructor;
@@ -26,4 +27,5 @@ public class SingleMovieDTO {
 	private Genre[] genres;
 	private Cast[] casts;
 	private Video[] videos;
+	private Crew[] crews;
 }

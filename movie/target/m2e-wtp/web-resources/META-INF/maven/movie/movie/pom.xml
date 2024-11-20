@@ -19,6 +19,7 @@
 	<properties>
 	    <spring.maven.artifact.version>4.3.25.RELEASE</spring.maven.artifact.version>
 		<egovframework.rte.version>3.10.0</egovframework.rte.version>
+		<security.version>4.2.3.RELEASE</security.version>
 	</properties>
 
 	<repositories>
@@ -224,12 +225,39 @@
     <version>20240303</version>
 </dependency>
 
-<!-- https://mvnrepository.com/artifact/org.ehcache/ehcache -->
+<!-- 캐싱 -->
 <dependency>
     <groupId>net.sf.ehcache</groupId>
     <artifactId>ehcache</artifactId>
     <version>2.10.6</version>
 </dependency>
+
+<!-- 스프링 시큐리티 -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>${security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>${security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-taglibs</artifactId>
+			<version>${security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<version>${security.version}</version>
+		</dependency>
 
 	</dependencies>
 

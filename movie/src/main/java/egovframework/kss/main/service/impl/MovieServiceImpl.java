@@ -21,8 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import egovframework.kss.main.dto.MovieSearchResultDTO;
+import egovframework.kss.main.dto.PersonSearchResultDTO;
 import egovframework.kss.main.dto.SingleMovieDTO;
 import egovframework.kss.main.model.Cast;
+import egovframework.kss.main.model.Crew;
 import egovframework.kss.main.model.Genre;
 import egovframework.kss.main.model.Movie;
 import egovframework.kss.main.model.Person;
@@ -42,11 +45,16 @@ public class MovieServiceImpl implements MovieService {
 	private static Logger Logger = LoggerFactory.getLogger(MovieServiceImpl.class);
 	private static final OkHttpClient client = new OkHttpClient();
 
+	@PreDestroy
+	public void cleanup() {
+		client.connectionPool().evictAll(); // 연결 풀 비우기
+	}
+
 	@Override
 	@Cacheable(value = "genreCache")
 	public Map<Integer, String> fetchGenres() {
 		Map<Integer, String> genreMap = new HashMap<>();
-		Request request2 = new Request.Builder().url("https://api.themoviedb.org/3/genre/movie/list?language=ko").get().addHeader("accept", "application/json").addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1Njk4OWZmMjMxOGQ4MWRlZTM5YTZhN2E1NjEzNjNhYyIsIm5iZiI6MTczMTkwMTMxNy4yMjA4NDYyLCJzdWIiOiI2NzMyYTRhNjYwN2U4YWEyMGVmNjdiMWEiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.N6xEzYqx7A6JQbWpjIIFRKnXUS8HEL_krVOW-by98d0").build();
+		Request request2 = new Request.Builder().url("https://api.themoviedb.org/3/genre/movie/list?language=ko").get().addHeader("accept", "application/json").addHeader("Authorization", propertiesService.getString("TMDB.Access.Token")).build();
 		Response response2 = null;
 		try {
 			response2 = client.newCall(request2).execute();
@@ -373,9 +381,7 @@ public class MovieServiceImpl implements MovieService {
 
 	@Override
 	public SingleMovieDTO singleMovie(int id, Map<Integer, String> genreMap) {
-		Logger.debug("----------------영화 상세페이지");
-		Request request = new Request.Builder().url("https://api.themoviedb.org/3/movie/" + id + "?append_to_response=videos,credits&language=ko-KR").get().addHeader("accept", "application/json").addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1Njk4OWZmMjMxOGQ4MWRlZTM5YTZhN2E1NjEzNjNhYyIsIm5iZiI6MTczMTkwMTMxNy4yMjA4NDYyLCJzdWIiOiI2NzMyYTRhNjYwN2U4YWEyMGVmNjdiMWEiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.N6xEzYqx7A6JQbWpjIIFRKnXUS8HEL_krVOW-by98d0").build();
-		System.out.println("요청url : " + request);
+		Request request = new Request.Builder().url("https://api.themoviedb.org/3/movie/" + id + "?append_to_response=videos,credits&language=ko-KR").get().addHeader("accept", "application/json").addHeader("Authorization", propertiesService.getString("TMDB.Access.Token")).build();
 		Response response = null;
 		SingleMovieDTO singleMovie = new SingleMovieDTO();
 
@@ -432,6 +438,35 @@ public class MovieServiceImpl implements MovieService {
 				}
 				singleMovie.setCasts(casts);
 
+				JSONArray crewArray = credits.getJSONArray("crew");
+				Crew[] crews = new Crew[crewArray.length()];
+
+				for (int i = 0; i < crewArray.length(); i++) {
+					JSONObject crewObject = crewArray.getJSONObject(i);
+					Crew crew = new Crew();
+
+					// 속성 이름과 메소드 매핑
+					Map<String, Consumer<Crew>> propertySetters = new HashMap<>();
+					propertySetters.put("cast_id", c -> c.setCast_id(crewObject.getInt("cast_id")));
+					propertySetters.put("id", c -> c.setPerson_id(crewObject.getInt("id")));
+					propertySetters.put("order", c -> c.setOrder(crewObject.getInt("order")));
+					propertySetters.put("profile_path", c -> c.setImg_url("https://image.tmdb.org/t/p/w300" + crewObject.getString("profile_path")));
+					propertySetters.put("name", c -> c.setName(crewObject.getString("name")));
+					propertySetters.put("department", c -> c.setDepartment(crewObject.getString("department")));
+					propertySetters.put("job", c -> c.setJob(crewObject.getString("job")));
+
+					// 속성 설정
+					for (String property : propertySetters.keySet()) {
+						if (crewObject.has(property) && !crewObject.isNull(property)) {
+							propertySetters.get(property).accept(crew);
+						}
+					}
+
+					crew.setMovie_id(id); // movie_id는 항상 설정
+					crews[i] = crew;
+				}
+				singleMovie.setCrews(crews);
+
 				JSONObject videoResponse = jsonResponse.getJSONObject("videos");
 				JSONArray videoArray = videoResponse.getJSONArray("results");
 				Video[] videos = new Video[videoArray.length()];
@@ -469,8 +504,48 @@ public class MovieServiceImpl implements MovieService {
 		return singleMovie;
 	}
 
-	@PreDestroy
-	public void cleanup() {
-		client.connectionPool().evictAll(); // 연결 풀 비우기
+	@Override
+	public MovieSearchResultDTO movieSearch(int page, String query) {
+		Request request = new Request.Builder().url("https://api.themoviedb.org/3/search/movie?query=" + query + "&include_adult=true&language=ko-KR&page=" + page + "&region=KR").get().addHeader("accept", "application/json").addHeader("Authorization", propertiesService.getString("TMDB.Access.Token")).build();
+		Response response = null;
+		MovieSearchResultDTO searchResult = new MovieSearchResultDTO();
+		try {
+			response = client.newCall(request).execute();
+			if (response.isSuccessful() && response.body() != null) {
+				String responseBody = response.body().string();
+				System.out.println(responseBody);
+				JSONObject jsonResponse = new JSONObject(responseBody);
+				searchResult.setTotal_pages(jsonResponse.getInt("total_pages"));
+				searchResult.setTotal_results(jsonResponse.getInt("total_results"));
+				JSONArray results = jsonResponse.getJSONArray("results");
+				Movie[] movies = new Movie[results.length()];
+				for (int i = 0; i < results.length(); i++) {
+					JSONObject result = results.getJSONObject(i);
+					Movie movie = new Movie();
+					movie.setId(result.getInt("id"));
+					movie.setImg_url("https://image.tmdb.org/t/p/w342" + result.getString("poster_path"));
+					movie.setTitle(result.getString("title"));
+					movie.setVote_average(roundToFirstDecimal(result.getDouble("vote_average")));
+					movies[i] = movie;
+				}
+				searchResult.setMovies(movies);
+			} else {
+				System.out.println("응답 에러남");
+			}
+		} catch (Exception e) {
+			Logger.error(e.getMessage());
+		} finally {
+			if (response != null) {
+				response.close();
+			}
+		}
+		return searchResult;
 	}
+
+	@Override
+	public PersonSearchResultDTO personSearch(int page, String query) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

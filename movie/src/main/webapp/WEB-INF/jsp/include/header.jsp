@@ -238,7 +238,7 @@
 				<select name="type">
 					<option value="movie">영화</option>
 					<option value="person">인물</option>
-				</select> <input type="text" name="query" placeholder="검색어를 입력해주세요" required>
+				</select> <input type="text" name="query" value="${query}" placeholder="검색어를 입력해주세요" required>
 
 			</div>
 			</form>
