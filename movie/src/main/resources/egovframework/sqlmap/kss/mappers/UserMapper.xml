@@ -3,6 +3,11 @@
 
 <mapper namespace="egovframework.kss.main.mapper.UserMapper">
 	<insert id="insertUser" parameterType="egovframework.kss.main.vo.UserVO">
-		insert into user(role, email, username, password) values(#{role}, #{email}, #{username}, #{password})
+		insert into users(role, email, username, password) values(#{role}, #{email}, #{username}, #{password})
 	</insert>
+	
+	<select id="selectUserByUsername" parameterType="String" resultType="egovframework.kss.main.vo.UserVO">
+		select * from users where username=#{username}
+	</select>
+	
 </mapper>

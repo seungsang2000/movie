@@ -18,4 +18,9 @@ public class UserDAO {
 		userMapper.insertUser(newUser);
 	}
 
+	public UserVO selectUserByUsername(String username) {
+		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+		return userMapper.selectUserByUsername(username);
+	}
+
 }

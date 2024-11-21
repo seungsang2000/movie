@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <!DOCTYPE html>
 <!--[if IE 7]>
@@ -16,7 +17,7 @@
 
 <head>
 <!-- Basic need -->
-<title>Open Pediatrics</title>
+<title>영화 리뷰 플랫폼</title>
 <meta charset="UTF-8">
 <meta name="description" content="">
 <meta name="keywords" content="">
@@ -48,12 +49,15 @@
 		</div>
 	</div>
 	<!--end of preloading-->
+	
+	
+	
 	<!--login form popup-->
 	<div class="login-wrapper" id="login-content">
 		<div class="login-content">
 			<a href="#" class="close">x</a>
 			<h3>Login</h3>
-			<form method="post" action="#">
+			<form method="post" action="#" id="login-form">
 				<div class="row">
 					<label for="username"> Username: <input type="text"
 						name="username" id="username" placeholder="Hugh Jackman"
@@ -96,7 +100,7 @@
 		<div class="login-content">
 			<a href="#" class="close">x</a>
 			<h3>sign up</h3>
-			<form method="post" action="#">
+			<form method="post" action="#" id="signup-form">
 				<div class="row">
 					<label for="username-2"> Username: <input type="text"
 						name="username" id="username-2" placeholder="movie"
@@ -129,7 +133,6 @@
 		</div>
 	</div>
 	<!--end of signup form popup-->
-
 	<!-- BEGIN | Header -->
 	<header class="ht-header">
 		<div class="container">
@@ -225,8 +228,18 @@
 										soon</a></li>
 							</ul></li>
 						<li><a href="#">Help</a></li>
+						<sec:authorize access="isAuthenticated()">
+							<li class="btn">
+        						<a href="/user/logout.do" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+   					 		</li>
+   					 		<form id="logout-form" action="/user/logout.do" method="POST" style="display: none;">
+							</form>
+						</sec:authorize>
+						
+						<sec:authorize access="!isAuthenticated()">
 						<li class="loginLink"><a href="#">LOG In</a></li>
 						<li class="btn signupLink"><a href="#">sign up</a></li>
+						</sec:authorize>
 					</ul>
 				</div>
 				<!-- /.navbar-collapse -->
@@ -246,3 +259,111 @@
 		</div>
 	</header>
 	<!-- END | Header -->
+	
+	<script>
+	function isValidUsername(username){
+	    const regex = /^[a-zA-Z][a-zA-Z0-9-_\.]{7,19}$/;
+	    return regex.test(username);
+	}
+	
+	function isValidPassword(password){
+	    const regex = /^[a-zA-Z\d\W]{8,20}$/;
+	    return regex.test(password)
+	}
+	
+	$(function(){
+	    let isUsernameValid = false;
+	    let isPasswordValid = false;
+	    
+	    $('#signup-form').on("submit",function(e){
+	        e.preventDefault();
+	        const formData = {
+	                username: $('#username-2').val(),
+	                email: $('#email-2').val(),
+	                password: $('#password-2').val(),
+	                repassword: $('#repassword-2').val()
+	        }
+	        
+	        if (!isValidUsername(formData.username)) {
+	            alert('아이디는 영문자로 시작하며 8~20자여야 합니다.');
+	            return;
+	        }
+
+	        if (!isValidPassword(formData.password)) {
+	            alert('비밀번호는 8~20자로 설정해주세요.');
+	            return;
+	        }
+	        
+	        if(formData.password != formData.repassword){
+	            alert("비밀번호가 일치하지 않습니다.");
+	            return;
+	        }
+	        
+	        $.ajax({
+	            url : "/user/signup.do",
+	            method : "POST",
+	            contentType: "application/json",
+	            data: JSON.stringify(formData),
+	            success: function(response){
+	                if(response.success){
+	                    alert("회원가입 성공! ");
+	                    location.reload();
+	                } else{
+	                    alert("회원가입 실패: "+response.message);
+	                }
+	            },
+	            error: function(xhr, status, error) {
+                    console.error("서버 오류:", status, error);
+                    alert('서버와의 연결에 문제가 발생했습니다.');
+                }
+	        });
+	    });
+	    
+	    $('#login-form').on("submit",function(e){
+	        e.preventDefault();
+	        const formData = {
+	                username: $('#username').val(),
+	                password: $('#password').val()
+	        }
+	        
+	        if (!isValidUsername(formData.username)) {
+	            alert('아이디는 영문자로 시작하며 8~20자여야 합니다.');
+	            return;
+	        }
+
+	        if (!isValidPassword(formData.password)) {
+	            alert('비밀번호는 8~20자로 설정해주세요.');
+	            return;
+	        }
+	        
+	        $.ajax({
+	            url: "/user/login.do",
+	            method: "POST",
+	            data: formData,
+	            success: function (response) {
+	                if (response.success) {
+	                    alert("로그인 성공!");
+	                    location.reload(); // 페이지 새로고침
+	                } else {
+	                    alert("로그인 실패: " + response.message);
+	                }
+	            },
+	            error: function (xhr) {
+	                if (xhr.status === 401) {
+	                    alert("로그인 실패: 아이디 또는 비밀번호가 잘못되었습니다.");
+	                } else {
+	                    alert("서버 오류가 발생했습니다.");
+	                }
+	            }
+	        });
+	            
+	        });
+	        
+	    });
+	    
+	
+	
+	
+	
+	
+	</script>
