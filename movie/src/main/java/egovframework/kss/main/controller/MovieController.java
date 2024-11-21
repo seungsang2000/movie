@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import egovframework.kss.main.dto.SingleMovieDTO;
 import egovframework.kss.main.service.MovieService;
 import egovframework.kss.main.service.UserService;
-import egovframework.kss.main.vo.UserVO;
 
 @Controller
 public class MovieController {
@@ -23,9 +22,6 @@ public class MovieController {
 
 	@RequestMapping("singleMovie.do")
 	public String singleMovie(@RequestParam("id") int id, Model model) {
-
-		UserVO currentUser = userService.getCurrentUser();
-		System.out.println(currentUser);
 
 		Map<Integer, String> genreMap = movieService.fetchGenres(); //장르 id와 이름 가져오기
 		SingleMovieDTO singlemovie = movieService.movieDetail(id, genreMap);
