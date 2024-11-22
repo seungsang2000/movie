@@ -78,7 +78,7 @@
 							<input type="checkbox" name="remember" value="Remember me"><span>Remember
 								me</span>
 						</div>
-						<a href="#">Forget password ?</a>
+						<a href="#" id="forgotPassword">Forget password ?</a>
 					</div>
 				</div>
 				<div class="row">
@@ -95,6 +95,39 @@
 		</div>
 	</div>
 	<!--end of login form popup-->
+	<!--비밀번호 팝업-->
+	<div class="login-wrapper" id="forgotPassword-content">
+	    <div class="login-content">
+	        <a href="#" class="close">x</a>
+	        <h3>비밀번호 복구</h3>
+	        
+	        <div class="row">
+	            <label for="email">이메일:
+	                <input type="text" name="email" id="email" placeholder="이메일을 입력하세요"
+	                    pattern="^[a-zA-Z][a-zA-Z0-9-_\.]{8,20}$" required="required" />
+	            </label>
+	        </div>
+	
+	        <!-- 인증번호 입력 필드는 처음엔 숨김 -->
+	        <div class="row" id="authKeyRow" style="display: none;">
+	            <label for="authKey">인증번호:
+	                <input type="text" name="authKey" id="authKey" placeholder="인증번호를 입력하세요"
+	                    pattern="^[a-zA-Z\d\W]{8,20}$" />
+	            </label>
+	        </div>
+	
+	        <!-- 이메일 전송 버튼 -->
+	        <div class="row" id="emailSendBtnRow">
+	            <button type="button" id="emailSendBtn">이메일 전송</button>
+	        </div>
+	
+	        <!-- 인증번호 전송 버튼, 처음엔 숨김 -->
+	        <div class="row" id="authKeyBtnRow" style="display: none;">
+	            <button type="button" id="authKeyBtn">인증번호 전송</button>
+	        </div>
+	    </div>
+	</div>
+	<!--비밀번호 팝업-->
 	<!--signup form popup-->
 	<div class="login-wrapper" id="signup-content">
 		<div class="login-content">
@@ -361,8 +394,58 @@
 	        });
 	            
 	        });
+	    
+		    $('#emailSendBtn').on('click', function() {
+	            var email = $('#email').val();
+	            
+	            // 이메일 전송 요청
+	            $.ajax({
+	                type: 'POST',
+	                url: '/user/sendEmail.do',  // 서버로 요청 보낼 URL
+	                data: { email: email },
+	                success: function(response) {
+	                    if (response.success) {
+	                        alert("이메일이 성공적으로 전송되었습니다.");
+	                        
+	                        // 인증번호 입력 필드와 버튼을 보이게 함
+	                        $('#authKeyRow').show();
+	                        $('#authKeyBtnRow').show();
+	                        $('#emailSendBtnRow').hide();  // 이메일 전송 버튼 숨김
+	                    } else {
+	                        alert(response.message || "이메일 전송에 실패했습니다.");
+	                    }
+	                },
+	                error: function() {
+	                    alert("서버 오류로 인해 이메일 전송에 실패했습니다.");
+	                }
+	            });
+	        });
+	
+	        // 인증번호 전송 버튼 클릭 (새로 추가된 버튼)
+	        $('#authKeyBtn').on('click', function() {
+	            var authKey = $('#authKey').val();
+	
+	            // 인증번호 전송 요청 (예시로 authKey 사용)
+	            $.ajax({
+	                type: 'POST',
+	                url: '/user/verifyAuthKey.do',  // 인증번호 검증 URL
+	                data: { authKey: authKey },
+	                success: function(response) {
+	                    if (response.success) {
+	                        alert("인증번호가 성공적으로 확인되었습니다.");
+	                    } else {
+	                        alert(response.message || "인증번호 검증에 실패했습니다.");
+	                    }
+	                },
+	                error: function() {
+	                    alert("서버 오류로 인해 인증번호 전송에 실패했습니다.");
+	                }
+	            });
+	        });
 	        
 	    });
+	
+		
 	    
 	
 	

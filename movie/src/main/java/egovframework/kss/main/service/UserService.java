@@ -15,4 +15,6 @@ public interface UserService {
 
 	public UserVO selectUserByEmail(String email);
 
+	public Map<String, Object> verifyAuthKey(String authKey);
+
 }

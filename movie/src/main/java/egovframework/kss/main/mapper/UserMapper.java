@@ -11,6 +11,8 @@ public interface UserMapper {
 
 	public void insertPasswordKey(PasswordKeyDTO passwordKeyDTO);
 
+	public PasswordKeyDTO selectVerifyKey(String key);
+
 	public void deletePasswordKeyByEmail(String tomail);
 
 	public UserVO selectUserByEmail(String email);

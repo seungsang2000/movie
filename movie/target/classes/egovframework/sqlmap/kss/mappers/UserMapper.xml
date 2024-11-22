@@ -14,6 +14,10 @@
 		insert into password_key(email,key) values (#{email},#{key})
 	</insert>
 	
+	<select id="selectVerifyKey" parameterType="String" resultType="egovframework.kss.main.dto.PasswordKeyDTO">
+		select * from password_key where key=#{key}
+	</select>
+	
 	<delete id="deletePasswordKeyByEmail" parameterType="String">
 		delete from password_key where email=#{email}
 	</delete>

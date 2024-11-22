@@ -30,6 +30,11 @@ public class UserDAO {
 
 	}
 
+	public PasswordKeyDTO selectVerifyKey(String key) {
+		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+		return userMapper.selectVerifyKey(key);
+	}
+
 	public void deletePasswordKeyByEmail(String tomail) {
 		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
 		userMapper.deletePasswordKeyByEmail(tomail);

@@ -149,4 +149,24 @@ public class UserServiceImpl implements UserService {
 		return userDAO.selectUserByEmail(email);
 	}
 
+	@Override
+	public Map<String, Object> verifyAuthKey(String authKey) {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			PasswordKeyDTO passwordKey = userDAO.selectVerifyKey(authKey);
+			if (passwordKey != null) {
+				response.put("success", true);
+				userDAO.deletePasswordKeyByEmail(passwordKey.getEmail());
+			} else {
+				response.put("success", false);
+				response.put("message", "인증키가 잘못되었습니다.");
+			}
+		} catch (Exception e) {
+			response.put("success", false);
+			response.put("message", "에러가 발생했습니다.");
+		}
+
+		return response;
+	}
+
 }

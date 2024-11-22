@@ -444,10 +444,13 @@ $(function(){
 	//==js for login and sign up
 	var loginLink = $(".loginLink");
 	var signupLink = $(".signupLink");
+	var forgotPassword = $("#forgotPassword");
 	var loginct = $( "#login-content" );
 	var signupct= $("#signup-content");
+	var forgotPasswordct = $("#forgotPassword-content");
 	var loginWrap = $(".login-wrapper");
 	var overlay = $(".overlay");
+	
 	loginWrap.each( function(){
 		$(this).wrap('<div class="overlay"></div>')
 	});
@@ -455,7 +458,7 @@ $(function(){
     loginLink.on('click', function(event){
     	event.preventDefault();
     	loginct.parents(overlay).addClass("openform");
-		$(document).on('click', function(e){
+		$(document).on('mousedown', function(e){ // click 말고 mousedown으로. 드래그시 팝업창 안 사라지게
 		var target = $(e.target);
 		if ($(target).hasClass("overlay")){
 				$(target).find(loginct).each( function(){
@@ -463,15 +466,33 @@ $(function(){
 				});
 				setTimeout( function(){
 					$(target).removeClass("openform");
-				}, 350);
+				}, 200);
 			}	
 		});
     });
+    
+    //비밀번호 복구 팝업
+    forgotPassword.on('click', function(event){
+        event.preventDefault();
+        forgotPasswordct.parents(overlay).addClass("openform");
+        $(document).on('mousedown', function(e){ 
+        var target = $(e.target);
+        if ($(target).hasClass("overlay")){
+                $(target).find(forgotPasswordct).each( function(){
+                    $(this).removeClass("openform");
+                });
+                setTimeout( function(){
+                    $(target).removeClass("openform");
+                }, 200);
+            }   
+        });
+    });
+    
     //pop up for signup form
     signupLink.on('click', function(event){
     	event.preventDefault();
     	signupct.parents(overlay).addClass("openform");
-		$(document).on('click', function(e){
+		$(document).on('mousedown', function(e){
 		var target = $(e.target);
 		if ($(target).hasClass("overlay")){
 				$(target).find(signupct).each( function(){
@@ -479,7 +500,7 @@ $(function(){
 				});
 				setTimeout( function(){
 					$(target).removeClass("openform");
-				}, 350);
+				}, 200);
 			}	
 		});
     });

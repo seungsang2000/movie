@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -103,6 +104,20 @@ public class UserController {
 
 		return ResponseEntity.ok(response);
 
+	}
+
+	@PostMapping("/sendEmail.do")
+	@ResponseBody
+	public Map<String, Object> sendEmail(@RequestParam String email) {
+		Map<String, Object> response = userService.sendMail(email);
+		return response;
+	}
+
+	@PostMapping("/verifyAuthKey.do")
+	@ResponseBody
+	public Map<String, Object> verifyAuthKey(@RequestParam String authKey) {
+		Map<String, Object> response = userService.verifyAuthKey(authKey);
+		return response;
 	}
 
 	@RequestMapping("/myPage.do")
