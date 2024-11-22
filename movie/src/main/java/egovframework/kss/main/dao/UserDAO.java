@@ -1,5 +1,7 @@
 package egovframework.kss.main.dao;
 
+import java.util.Map;
+
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -44,6 +46,16 @@ public class UserDAO {
 	public UserVO selectUserByEmail(String email) {
 		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
 		return userMapper.selectUserByEmail(email);
+	}
+
+	public boolean checkExistUserEmailForUpdate(Map<String, Object> params) {
+		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+		return userMapper.checkExistUserEmailForUpdate(params);
+	}
+
+	public void updateUser(UserVO user) {
+		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+		userMapper.updateUser(user);
 	}
 
 }

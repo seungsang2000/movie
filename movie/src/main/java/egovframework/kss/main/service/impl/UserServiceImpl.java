@@ -169,4 +169,14 @@ public class UserServiceImpl implements UserService {
 		return response;
 	}
 
+	@Override
+	public boolean checkExistUserEmailForUpdate(Map<String, Object> params) {
+		return userDAO.checkExistUserEmailForUpdate(params);
+	}
+
+	@Override
+	public void updateUser(UserVO user) {
+		userDAO.updateUser(user);
+	}
+
 }

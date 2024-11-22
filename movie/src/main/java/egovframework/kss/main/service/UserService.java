@@ -17,4 +17,8 @@ public interface UserService {
 
 	public Map<String, Object> verifyAuthKey(String authKey);
 
+	public boolean checkExistUserEmailForUpdate(Map<String, Object> params);
+
+	public void updateUser(UserVO user);
+
 }

@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
@@ -128,38 +130,32 @@ public class UserController {
 		return "user/myPage";
 	}
 
-	/*@PostMapping("/updateUserProfile.do")
+	@PostMapping("/updateUserProfile.do")
 	@ResponseBody
-	public ResponseEntity<Map<String, Object>> updateUserProfile(@RequestParam String name, @RequestParam String email, @RequestParam(required = false) MultipartFile uploadFile, HttpServletRequest request) {
+	public ResponseEntity<Map<String, Object>> updateUserProfile(@RequestParam String name, @RequestParam String email, HttpServletRequest request) {
 		Map<String, Object> response = new HashMap<>();
-	
+
 		UserVO user = userService.getCurrentUser();
-	
+
 		Map<String, Object> param = new HashMap<>();
 		param.put("email", email);
 		param.put("id", user.getId());
-	
+
 		// 이메일 중복 검사
 		if (userService.checkExistUserEmailForUpdate(param)) {
-	
+
 			response.put("success", false);
 			response.put("message", "이미 사용 중인 이메일입니다.");
 			return ResponseEntity.ok(response);
 		}
-	
+
 		user.setUsername(name);
 		user.setEmail(email);
-		;
-	
-		if (uploadFile != null && !uploadFile.isEmpty()) {
-			String imagePath = saveImage(uploadFile); // 이미지 저장
-			user.setImage_path(imagePath); // CourseVO에 이미지 경로 설정
-		}
-	
+
 		userService.updateUser(user);
-	
+
 		response.put("success", true);
 		return ResponseEntity.ok(response);
-	}*/
+	}
 
 }
