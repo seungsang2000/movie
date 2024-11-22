@@ -92,7 +92,7 @@
     											<c:if test="${status.index < 10}">
        												<div class="cast-it">
             										<div class="cast-left">
-                										<img src="${cast.img_url}" alt="" style="height: 50px; width: 50px; object-fit: cover;">
+                										<img src="${cast.img_url}" alt="" style="height: 50px; width: 50px; object-fit: cover;" onerror="this.src='images/human.png';">
                 										<a href="/singlePerson?id=${cast.person_id}">${cast.name}</a>
             										</div>
             										<p>... ${cast.character}</p>
@@ -369,7 +369,7 @@
         										<c:if test="${crew.job == 'Director'}">											
 											<div class="cast-it">
 												<div class="cast-left">
-													<img src="${crew.img_url}" alt="" style="height: 50px; width: 50px; object-fit: cover;">
+													<img src="${crew.img_url}" alt="" style="height: 50px; width: 50px; object-fit: cover;" onerror="this.src='images/human.png';">
 													<a href="/singlePerson?id=${crew.person_id}">${crew.name}</a>
 												</div>
 												<p>...  ${crew.job}</p>
@@ -386,7 +386,7 @@
     											<c:if test="${status.index < 10}">
        												<div class="cast-it">
             										<div class="cast-left">
-                										<img src="${cast.img_url}" alt="" style="height: 50px; width: 50px; object-fit: cover;">
+                										<img src="${cast.img_url}" alt="" style="height: 50px; width: 50px; object-fit: cover;" onerror="this.src='images/human.png';">
                 										<a href="/singlePerson?id=${cast.person_id}">${cast.name}</a>
             										</div>
             										<p>... ${cast.character}</p>
@@ -401,10 +401,10 @@
 										<div class="mvcast-item">		
 										<c:forEach var="crew" items="${movie.crews}">
 										<c:if test="${crew.job != 'Director'}">		
-        										<c:if test="${crew.department == 'Directing' || crew.department == 'Writing' || crew.department == 'Production'}">										
+        										<c:if test="${crew.department == 'Directing' || crew.department == 'Writing' || crew.department == 'Production'}" >										
 											<div class="cast-it">
 												<div class="cast-left">
-													<img src="${crew.img_url}" alt="" style="height: 50px; width: 50px; object-fit: cover;">
+													<img src="${crew.img_url}" alt="" style="height: 50px; width: 50px; object-fit: cover;" onerror="this.src='images/human.png';">
 													<a href="/singlePerson?id=${crew.person_id}">${crew.name}</a>
 												</div>
 												<p>...  ${crew.job}</p>

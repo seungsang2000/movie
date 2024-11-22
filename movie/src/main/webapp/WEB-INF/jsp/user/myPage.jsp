@@ -22,7 +22,7 @@
 			<div class="col-md-3 col-sm-12 col-xs-12">
 				<div class="user-information">
 					<div class="user-img">
-						<a href="#"><img src="images/uploads/user-img.png" alt=""><br></a>
+						<a href="#"><img src="${pageContext.request.contextPath}/images/uploads/user-img.png" alt="" onerror="this.src='${pageContext.request.contextPath}/images/human.png';"><br></a>
 						<a href="#" class="redbtn">이미지 변경</a>
 					</div>
 					<div class="user-fav">
@@ -49,13 +49,13 @@
 						<div class="row">
 							<div class="col-md-6 form-it">
 								<label>유저명</label>
-								<input type="text" placeholder="edwardkennedy">
+								<input type="text" placeholder="유저명을 입력하세요" value="${currentUser.username}">
 							</div>
 						</div>
 						<div class="row">
 							<div class="col-md-6 form-it">
 								<label>Email Address</label>
-								<input type="text" placeholder="edward@kennedy.com">
+								<input type="text" placeholder="이메일을 입력하세요" value="${currentUser.email}">
 							</div>
 						</div>
 						<div class="row">

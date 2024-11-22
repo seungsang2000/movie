@@ -25,24 +25,24 @@
 <link rel="profile" href="#">
 
 <!--Google Font-->
-<link rel="stylesheet" href='css/googleFont.css' />
+<link rel="stylesheet" href='${pageContext.request.contextPath}/css/googleFont.css' />
 <!-- Mobile specific meta -->
 <meta name=viewport content="width=device-width, initial-scale=1">
 <meta name="format-detection" content="telephone-no">
 
 <!-- CSS files -->
-<link rel="stylesheet" href="css/plugins.css">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/plugins.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
 
-<script src="js/jquery.js"></script>
-	<script src="js/plugins.js"></script>
-	<script src="js/plugins2.js"></script>
-	<script src="js/custom.js"></script>
+<script src="${pageContext.request.contextPath}/js/jquery.js"></script>
+	<script src="${pageContext.request.contextPath}/js/plugins.js"></script>
+	<script src="${pageContext.request.contextPath}/js/plugins2.js"></script>
+	<script src="${pageContext.request.contextPath}/js/custom.js"></script>
 </head>
 <body>
 	<!--preloading-->
 	<div id="preloader">
-		<img class="logo" src="images/logo1.png" alt="" width="119"
+		<img class="logo" src="${pageContext.request.contextPath}/images/logo1.png" alt="" width="119"
 			height="58">
 		<div id="status">
 			<span></span> <span></span>
@@ -146,7 +146,7 @@
 							<span></span> <span></span> <span></span>
 						</div>
 					</div>
-					<a href="/"><img class="logo" src="images/logo1.png" alt=""
+					<a href="/"><img class="logo" src="${pageContext.request.contextPath}/images/logo1.png" alt=""
 						width="119" height="58"></a>
 				</div>
 				<!-- Collect the nav links, forms, and other content for toggling -->
@@ -229,6 +229,9 @@
 							</ul></li>
 						<li><a href="#">Help</a></li>
 						<sec:authorize access="isAuthenticated()">
+							<li>
+								<li><a href="/user/myPage.do">myPage</a></li>
+							<li>
 							<li class="btn">
         						<a href="/user/logout.do" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
    					 		</li>

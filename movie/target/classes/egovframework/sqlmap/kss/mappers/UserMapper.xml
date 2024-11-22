@@ -10,4 +10,16 @@
 		select * from users where username=#{username}
 	</select>
 	
+	<insert id="insertPasswordKey" parameterType="egovframework.kss.main.dto.PasswordKeyDTO">
+		insert into password_key(email,key) values (#{email},#{key})
+	</insert>
+	
+	<delete id="deletePasswordKeyByEmail" parameterType="String">
+		delete from password_key where email=#{email}
+	</delete>
+	
+	<select id="selectUserByEmail" parameterType="String" resultType="egovframework.kss.main.vo.UserVO">
+		select * from users where email=#{email} limit 1
+	</select>
+	
 </mapper>

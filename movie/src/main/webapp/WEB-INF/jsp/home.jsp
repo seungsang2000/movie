@@ -184,7 +184,7 @@
 							<c:forEach var="person" items="${popularPeople}">
 							<div class="celeb-item">
 								<a href="#"><img src="${person.img_url}" alt=""
-									width="70" height="70" object-fit: cover;></a>
+									width="70" height="70" object-fit: cover; onerror="this.src='images/human.png';"></a>
 								<div class="celeb-author">
 									<h6>
 										<a href="#">${person.name}</a>

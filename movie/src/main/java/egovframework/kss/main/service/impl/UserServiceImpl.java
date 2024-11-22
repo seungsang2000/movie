@@ -1,15 +1,23 @@
 package egovframework.kss.main.service.impl;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
+import javax.mail.internet.MimeMessage;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import egovframework.kss.main.dao.UserDAO;
+import egovframework.kss.main.dto.PasswordKeyDTO;
 import egovframework.kss.main.exception.CustomException;
+import egovframework.kss.main.mail.TempKey;
 import egovframework.kss.main.model.CustomUserDetails;
 import egovframework.kss.main.service.UserService;
 import egovframework.kss.main.vo.UserVO;
@@ -21,6 +29,9 @@ public class UserServiceImpl implements UserService {
 	UserDAO userDAO;
 
 	private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+	@Autowired
+	private JavaMailSender sender;
 
 	@Override
 	public void signUp(String email, String password, String username) throws Exception {
@@ -73,6 +84,69 @@ public class UserServiceImpl implements UserService {
 		} catch (Exception e) {
 			throw new CustomException("유저 정보에 이상이 생겼습니다");
 		}
+	}
+
+	@Override
+	public Map<String, Object> sendMail(String email) {
+		Map<String, Object> response = new HashMap<>();
+
+		UserVO user = selectUserByEmail(email);
+
+		if (user == null) {
+			response.put("success", false);
+			response.put("message", "해당 이메일을 찾을 수 없습니다.");
+			return response;
+		}
+
+		String setfrom = "rovin054@gmail.com";
+		String key = new TempKey().getKey(20, false);
+
+		String tomail = user.getEmail();     // 받는 사람 이메일
+		String title = "이메일 인증입니다.";
+		String content = new StringBuilder().append(user.getUsername()).append("님! 이용해주셔서 감사합니다.\n").append("다음 인증키를 화면에 입력해주십시오.\n").append("인증키: ").append(key).toString();
+		try {
+			MimeMessage message = sender.createMimeMessage();
+			MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
+
+			messageHelper.setFrom(setfrom, "영화 리뷰 사이트 운영진");  // 보내는사람 생략하거나 하면 정상작동을 안함 두번째 인자값은 보낼때의 이름이다.
+			messageHelper.setTo(tomail);     // 받는사람 이메일
+			messageHelper.setSubject(title); // 메일제목은 생략이 가능하다
+			messageHelper.setText(content);  // 메일 내용
+
+			sender.send(message);
+
+			deletePasswordKeyByEmail(tomail);
+
+			PasswordKeyDTO passwordKeyDTO = new PasswordKeyDTO();
+			passwordKeyDTO.setEmail(tomail);
+			passwordKeyDTO.setKey(key);
+
+			insertPasswordKey(passwordKeyDTO);
+
+			response.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("success", false);
+			response.put("message", "이메일 발송에 실패했습니다.");
+		}
+
+		return response;
+	}
+
+	private void insertPasswordKey(PasswordKeyDTO passwordKeyDTO) {
+		userDAO.insertPasswordKey(passwordKeyDTO);
+
+	}
+
+	private void deletePasswordKeyByEmail(String tomail) {
+		userDAO.deletePasswordKeyByEmail(tomail);
+
+	}
+
+	@Override
+	public UserVO selectUserByEmail(String email) {
+		return userDAO.selectUserByEmail(email);
 	}
 
 }

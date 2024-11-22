@@ -4,6 +4,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import egovframework.kss.main.dto.PasswordKeyDTO;
 import egovframework.kss.main.mapper.UserMapper;
 import egovframework.kss.main.vo.UserVO;
 
@@ -21,6 +22,23 @@ public class UserDAO {
 	public UserVO selectUserByUsername(String username) {
 		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
 		return userMapper.selectUserByUsername(username);
+	}
+
+	public void insertPasswordKey(PasswordKeyDTO passwordKeyDTO) {
+		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+		userMapper.insertPasswordKey(passwordKeyDTO);
+
+	}
+
+	public void deletePasswordKeyByEmail(String tomail) {
+		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+		userMapper.deletePasswordKeyByEmail(tomail);
+
+	}
+
+	public UserVO selectUserByEmail(String email) {
+		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+		return userMapper.selectUserByEmail(email);
 	}
 
 }

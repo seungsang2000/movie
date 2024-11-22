@@ -1,5 +1,7 @@
 package egovframework.kss.main.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import egovframework.kss.main.service.UserService;
 import egovframework.kss.main.vo.UserVO;
@@ -22,6 +25,20 @@ public class UserController {
 
 	@Autowired
 	UserService userService;
+
+	private String saveImage(MultipartFile file) {
+		String uploadDir = "C:\\upload\\"; // 실제 경로
+		String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename(); // 중복 방지
+		File destinationFile = new File(uploadDir + fileName);
+
+		try {
+			file.transferTo(destinationFile); // 파일 저장
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return "upload/" + fileName; // 저장된 이미지 경로 반환 (웹에서 접근할 수 있도록)
+	}
 
 	@PostMapping("/signup.do")
 	@ResponseBody
@@ -90,8 +107,44 @@ public class UserController {
 
 	@RequestMapping("/myPage.do")
 	public String myPage(Model model) {
+		UserVO currentUser = userService.getCurrentUser();
+		model.addAttribute("currentUser", currentUser);
 
 		return "user/myPage";
 	}
+
+	/*@PostMapping("/updateUserProfile.do")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> updateUserProfile(@RequestParam String name, @RequestParam String email, @RequestParam(required = false) MultipartFile uploadFile, HttpServletRequest request) {
+		Map<String, Object> response = new HashMap<>();
+	
+		UserVO user = userService.getCurrentUser();
+	
+		Map<String, Object> param = new HashMap<>();
+		param.put("email", email);
+		param.put("id", user.getId());
+	
+		// 이메일 중복 검사
+		if (userService.checkExistUserEmailForUpdate(param)) {
+	
+			response.put("success", false);
+			response.put("message", "이미 사용 중인 이메일입니다.");
+			return ResponseEntity.ok(response);
+		}
+	
+		user.setUsername(name);
+		user.setEmail(email);
+		;
+	
+		if (uploadFile != null && !uploadFile.isEmpty()) {
+			String imagePath = saveImage(uploadFile); // 이미지 저장
+			user.setImage_path(imagePath); // CourseVO에 이미지 경로 설정
+		}
+	
+		userService.updateUser(user);
+	
+		response.put("success", true);
+		return ResponseEntity.ok(response);
+	}*/
 
 }
