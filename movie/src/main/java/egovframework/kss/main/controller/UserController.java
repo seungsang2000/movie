@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
@@ -132,7 +130,7 @@ public class UserController {
 
 	@PostMapping("/updateUserProfile.do")
 	@ResponseBody
-	public ResponseEntity<Map<String, Object>> updateUserProfile(@RequestParam String name, @RequestParam String email, HttpServletRequest request) {
+	public ResponseEntity<Map<String, Object>> updateUserProfile(@RequestParam String name, @RequestParam String email) {
 		Map<String, Object> response = new HashMap<>();
 
 		UserVO user = userService.getCurrentUser();
