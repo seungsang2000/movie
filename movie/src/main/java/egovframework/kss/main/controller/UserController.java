@@ -130,29 +130,22 @@ public class UserController {
 
 	@PostMapping("/updateUserProfile.do")
 	@ResponseBody
-	public ResponseEntity<Map<String, Object>> updateUserProfile(@RequestParam String name, @RequestParam String email) {
+	public ResponseEntity<Map<String, Object>> updateUserProfile(@RequestParam String username, @RequestParam String email) {
 		Map<String, Object> response = new HashMap<>();
 
 		UserVO user = userService.getCurrentUser();
-
 		Map<String, Object> param = new HashMap<>();
 		param.put("email", email);
 		param.put("id", user.getId());
+		param.put("username", username);
 
-		// 이메일 중복 검사
-		if (userService.checkExistUserEmailForUpdate(param)) {
-
+		try {
+			userService.updateUser(user, param);
+			response.put("success", true);
+		} catch (Exception e) {
 			response.put("success", false);
-			response.put("message", "이미 사용 중인 이메일입니다.");
-			return ResponseEntity.ok(response);
+			response.put("message", e.getMessage().toString());
 		}
-
-		user.setUsername(name);
-		user.setEmail(email);
-
-		userService.updateUser(user);
-
-		response.put("success", true);
 		return ResponseEntity.ok(response);
 	}
 

@@ -38,6 +38,14 @@
 	<script src="${pageContext.request.contextPath}/js/plugins.js"></script>
 	<script src="${pageContext.request.contextPath}/js/plugins2.js"></script>
 	<script src="${pageContext.request.contextPath}/js/custom.js"></script>
+	
+	<style>
+	.disabled-btn {
+	    background-color: #d3d3d3 !important; 
+	    color: #888 !important; 
+	    cursor: not-allowed !important; 
+	}
+	</style>
 </head>
 <body>
 	<!--preloading-->
@@ -52,14 +60,14 @@
 	
 	
 	
-	<!--login form popup-->
+	<!--로그인-->
 	<div class="login-wrapper" id="login-content">
 		<div class="login-content">
 			<a href="#" class="close">x</a>
 			<h3>Login</h3>
 			<form method="post" action="#" id="login-form">
 				<div class="row">
-					<label for="username"> Username: <input type="text"
+					<label for="username"> 유저명: <input type="text"
 						name="username" id="username" placeholder="Hugh Jackman"
 						pattern="^[a-zA-Z][a-zA-Z0-9-_\.]{8,20}$" required="required" />
 					</label>
@@ -85,13 +93,13 @@
 					<button type="submit">Login</button>
 				</div>
 			</form>
-			<div class="row">
+			<!-- <div class="row">
 				<p>Or via social</p>
 				<div class="social-btn-2">
 					<a class="fb" href="#"><i class="ion-social-facebook"></i>Facebook</a>
 					<a class="tw" href="#"><i class="ion-social-twitter"></i>twitter</a>
 				</div>
-			</div>
+			</div> -->
 		</div>
 	</div>
 	<!--end of login form popup-->
@@ -104,7 +112,7 @@
 	        <div class="row">
 	            <label for="email">이메일:
 	                <input type="text" name="email" id="email" placeholder="이메일을 입력하세요"
-	                    pattern="^[a-zA-Z][a-zA-Z0-9-_\.]{8,20}$" required="required" />
+	                    pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" required="required" />
 	            </label>
 	        </div>
 	
@@ -127,7 +135,32 @@
 	        </div>
 	    </div>
 	</div>
+	
 	<!--비밀번호 팝업-->
+	
+	<!-- 임시비밀번호 -->
+	<div class="login-wrapper" id="forgotPassword-content">
+	    <div class="login-content">
+	        <a href="#" class="close">x</a>
+	        <h3>임시비밀번호</h3>
+	        
+	        <div class="row">
+	            <label for="tempPassword">임시비밀번호:
+	                <input type="text" name="tempPassword" id="tempPassword" placeholder=""
+	                    pattern="^[a-zA-Z][a-zA-Z0-9-_\.]{8,20}$"  />
+	            </label>
+	        </div>
+	        
+	        계정의 비빌번호가 임시 비밀번호로 변경되었습니다. 해당 계정으로 로그인한 후, 비밀번호를 변경해주세요.
+	
+	        <!-- 이메일 전송 버튼 -->
+	        <div class="row" id="returnMainPageBtnRow">
+	            <button type="button" id="returnMainPageBtn">메인 화면으로 돌아가기</button>
+	        </div>
+	    </div>
+	</div>
+	<!-- 임시비밀번호 -->
+	
 	<!--signup form popup-->
 	<div class="login-wrapper" id="signup-content">
 		<div class="login-content">
@@ -135,32 +168,32 @@
 			<h3>sign up</h3>
 			<form method="post" action="#" id="signup-form">
 				<div class="row">
-					<label for="username-2"> Username: <input type="text"
+					<label for="username-2"> 유저명: <input type="text"
 						name="username" id="username-2" placeholder="movie"
 						pattern="^[a-zA-Z][a-zA-Z0-9-_\.]{8,20}$" required="required" />
 					</label>
 				</div>
 
 				<div class="row">
-					<label for="email-2"> your email: <input type="email" name="email" id="email-2" placeholder="movie@movie.com" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" required="required" />
+					<label for="email-2"> 이메일: <input type="email" name="email" id="email-2" placeholder="movie@movie.com" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" required="required" />
 					</label>
 				</div>
 				<div class="row">
-					<label for="password-2"> Password: <input type="password"
+					<label for="password-2"> 비밀번호: <input type="password"
 						name="password" id="password-2" placeholder=""
 						pattern="^[a-zA-Z\d\W]{8,20}$"
 						required="required" />
 					</label>
 				</div>
 				<div class="row">
-					<label for="repassword-2"> re-type Password: <input
+					<label for="repassword-2"> 비밀번호 재입력 : <input
 						type="password" name="password" id="repassword-2" placeholder=""
 						pattern="^[a-zA-Z\d\W]{8,20}$"
 						required="required" />
 					</label>
 				</div>
 				<div class="row">
-					<button type="submit">sign up</button>
+					<button type="submit">회원가입</button>
 				</div>
 			</form>
 		</div>
@@ -296,6 +329,8 @@
 	</header>
 	<!-- END | Header -->
 	
+
+	
 	<script>
 	function isValidUsername(username){
 	    const regex = /^[a-zA-Z][a-zA-Z0-9-_\.]{7,19}$/;
@@ -398,6 +433,8 @@
 		    $('#emailSendBtn').on('click', function() {
 	            var email = $('#email').val();
 	            
+	            $('#emailSendBtn').prop('disabled', true).addClass("disabled-btn");
+	            
 	            // 이메일 전송 요청
 	            $.ajax({
 	                type: 'POST',
@@ -417,6 +454,10 @@
 	                },
 	                error: function() {
 	                    alert("서버 오류로 인해 이메일 전송에 실패했습니다.");
+	                },
+	                complete: function() {
+	                    // 응답을 받은 후 이메일 전송 버튼 활성화
+	                    $('#emailSendBtn').prop('disabled', false).removeClass("disabled-btn");
 	                }
 	            });
 	        });
@@ -443,13 +484,13 @@
 	            });
 	        });
 	        
+	        
+	        $("#returnMainPageBtn").on('click', function(){
+	        	    window.loaction.reload();
+	        });
+	        
+	        
+	        
 	    });
-	
-		
-	    
-	
-	
-	
-	
 	
 	</script>

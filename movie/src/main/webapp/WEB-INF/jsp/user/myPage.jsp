@@ -44,18 +44,18 @@
 			</div>
 			<div class="col-md-9 col-sm-12 col-xs-12">
 				<div class="form-style-1 user-pro" action="#">
-							<form action="#" class="user">
-						   	<h4>01. 프로필 세부정보</h4>
+							<form action="#" class="user" id="userProfileForm">
+						    <h4>01. 프로필 세부정보</h4>
 						    <div class="row">
 						        <div class="col-md-6 form-it">
 						            <label>유저명</label>
-						            <input type="text" name="username" placeholder="유저명을 입력하세요" value="${currentUser.username}">
+						            <input type="text" id="updateUsername" name="updateUsername" placeholder="유저명을 입력하세요" value="${currentUser.username}">
 						        </div>
 						    </div>
 						    <div class="row">
 						        <div class="col-md-6 form-it">
-						            <label>Email Address</label>
-						            <input type="text" name="email" placeholder="이메일을 입력하세요" value="${currentUser.email}">
+						            <label>이메일 주소</label>
+						            <input type="text" id="updateEmail" name="updateEmail" placeholder="이메일을 입력하세요" value="${currentUser.email}">
 						        </div>
 						    </div>
 						    <div class="row">
@@ -81,7 +81,7 @@
 						<div class="row">
 							<div class="col-md-6 form-it">
 								<label>새 비밀번호 확인</label>
-								<input type="text" placeholder="*************** ">
+								<input type="text" placeholder="***************">
 							</div>
 						</div>
 						<div class="row">
@@ -98,36 +98,54 @@
 
 
 <script>
-	$(function(){
-	    $("#changeUserProfile").on("click",function(){
-	        e.preventDefault(); // 기본 폼 제출 방지
 
-            // 폼 데이터 가져오기
-            var username = $("input[name='username']").val();
-            var email = $("input[name='email']").val();
 
-            // AJAX 요청 보내기
-            $.ajax({
-                url: '/user/updateUserProfile.do',
-                type: 'POST',
-                data: {
-                    username: username,
-                    email: email
-                },
-                success: function(response) {
-                    if (response.success) {
-                        alert('프로필 정보가 업데이트되었습니다.');
-                    } else {
-                        alert('프로필 업데이트에 실패했습니다.');
-                    }
-                },
-                error: function() {
-                    alert('서버에 문제가 발생했습니다.');
+
+$(function() {
+
+    // 프로필 정보를 업데이트하는 함수
+    function updateProfile(e) {
+        e.preventDefault(); // 기본 폼 제출 방지
+
+        // 값 출력하여 제대로 값을 가져오는지 확인
+        console.log("updateUsername:", $("#updateUsername").val());
+        console.log("updateEmail:", $("#updateEmail").val());
+
+        console.log($("#username").length);
+        
+        // 폼 데이터 가져오기
+        var updateUsername = $("#updateUsername").val();
+        var updateEmail = $("#updateEmail").val();
+
+        // 프로필 정보 변경 확인
+        if (!confirm("프로필 정보를 변경하시겠습니까?")) {
+            return;  // 사용자가 취소하면 아무 일도 일어나지 않음
+        }
+
+        // AJAX 요청 보내기
+        $.ajax({
+            url: '/user/updateUserProfile.do',
+            type: 'POST',
+            data: {
+                username: updateUsername,
+                email: updateEmail
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert('프로필 정보가 업데이트되었습니다.');
+                    location.reload(); // 페이지 새로고침
+                } else {
+                    alert('프로필 업데이트에 실패했습니다: ' + response.message);
                 }
-            });
-	    });
-	});
-
+            },
+            error: function() {
+                alert('서버에 문제가 발생했습니다.');
+            }
+        });
+    }
+    // 폼 제출 이벤트에 대한 처리 (엔터키 처리)
+    $("#userProfileForm").on("submit", updateProfile); // 폼 제출 시 updateProfile 함수 호출
+});
 
 </script>
 <%@ include file="/WEB-INF/jsp/include/footer.jsp" %>

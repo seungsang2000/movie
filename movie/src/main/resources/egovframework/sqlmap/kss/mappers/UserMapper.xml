@@ -31,7 +31,7 @@
 	</select>
 	
 	<update id="updateUser" parameterType="egovframework.kss.main.vo.UserVO">
-		update user set username=#{username}, email=#{email} where id =#{id} 
+		update users set username=#{username}, email=#{email} where id = #{id} 
 	</update>
 	
 </mapper>

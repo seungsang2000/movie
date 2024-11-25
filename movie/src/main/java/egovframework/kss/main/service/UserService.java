@@ -19,6 +19,6 @@ public interface UserService {
 
 	public boolean checkExistUserEmailForUpdate(Map<String, Object> params);
 
-	public void updateUser(UserVO user);
+	public void updateUser(UserVO user, Map<String, Object> param) throws Exception;
 
 }

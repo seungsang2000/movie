@@ -57,56 +57,56 @@
 						<option value="saab">10 Movies</option>
 					</select>
 					
-<div class="pagination2">
-    <span>Page ${page} of ${searchResult.total_pages}:</span>
-
-    <!-- 이전 페이지 링크 -->
-    <c:if test="${page > 1}">
-        <a href="?type=movie&query=${query}&page=${page - 1}">
-            <i class="ion-arrow-left-b"></i>
-        </a>
-    </c:if>
-
-    <!-- 첫 페이지 링크 -->
-    <c:if test="${searchResult.total_pages > 2 && page > 2}">
-        <a href="?type=movie&query=${query}&page=1">1</a>
-    </c:if>
-
-    <!-- 생략 기호 -->
-    <c:if test="${searchResult.total_pages > 3 && page > 3}">
-        <span>...</span>
-    </c:if>
-
-    <!-- 이전 페이지 링크 -->
-    <c:if test="${page > 1}">
-        <a href="?type=movie&query=${query}&page=${page - 1}">${page - 1}</a>
-    </c:if>
-
-    <!-- 현재 페이지 강조 -->
-    <a class="active">${page}</a>
-
-    <!-- 다음 페이지 링크 -->
-    <c:if test="${page < searchResult.total_pages}">
-        <a href="?type=movie&query=${query}&page=${page + 1}">${page + 1}</a>
-    </c:if>
-
-    <!-- 생략 기호 -->
-    <c:if test="${searchResult.total_pages > 3 && page < searchResult.total_pages - 2}">
-        <span>...</span>
-    </c:if>
-
-    <!-- 마지막 페이지 링크 -->
-    <c:if test="${searchResult.total_pages > 2 && page < searchResult.total_pages - 1}">
-        <a href="?type=movie&query=${query}&page=${searchResult.total_pages}">${searchResult.total_pages}</a>
-    </c:if>
-
-    <!-- 다음 페이지 링크 -->
-    <c:if test="${page < searchResult.total_pages}">
-        <a href="?type=movie&query=${query}&page=${page + 1}">
-            <i class="ion-arrow-right-b"></i>
-        </a>
-    </c:if>
-</div>
+					<div class="pagination2">
+					    <span>Page ${page} of ${searchResult.total_pages}:</span>
+					
+					    <!-- 이전 페이지 링크 -->
+					    <c:if test="${page > 1}">
+					        <a href="?type=movie&query=${query}&page=${page - 1}">
+					            <i class="ion-arrow-left-b"></i>
+					        </a>
+					    </c:if>
+					
+					    <!-- 첫 페이지 링크 -->
+					    <c:if test="${searchResult.total_pages > 2 && page > 2}">
+					        <a href="?type=movie&query=${query}&page=1">1</a>
+					    </c:if>
+					
+					    <!-- 생략 기호 -->
+					    <c:if test="${searchResult.total_pages > 3 && page > 3}">
+					        <span>...</span>
+					    </c:if>
+					
+					    <!-- 이전 페이지 링크 -->
+					    <c:if test="${page > 1}">
+					        <a href="?type=movie&query=${query}&page=${page - 1}">${page - 1}</a>
+					    </c:if>
+					
+					    <!-- 현재 페이지 강조 -->
+					    <a class="active">${page}</a>
+					
+					    <!-- 다음 페이지 링크 -->
+					    <c:if test="${page < searchResult.total_pages}">
+					        <a href="?type=movie&query=${query}&page=${page + 1}">${page + 1}</a>
+					    </c:if>
+					
+					    <!-- 생략 기호 -->
+					    <c:if test="${searchResult.total_pages > 3 && page < searchResult.total_pages - 2}">
+					        <span>...</span>
+					    </c:if>
+					
+					    <!-- 마지막 페이지 링크 -->
+					    <c:if test="${searchResult.total_pages > 2 && page < searchResult.total_pages - 1}">
+					        <a href="?type=movie&query=${query}&page=${searchResult.total_pages}">${searchResult.total_pages}</a>
+					    </c:if>
+					
+					    <!-- 다음 페이지 링크 -->
+					    <c:if test="${page < searchResult.total_pages}">
+					        <a href="?type=movie&query=${query}&page=${page + 1}">
+					            <i class="ion-arrow-right-b"></i>
+					        </a>
+					    </c:if>
+					</div>
 				</div>
 			</div>
 		</div>

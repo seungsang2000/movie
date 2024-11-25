@@ -175,7 +175,29 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void updateUser(UserVO user) {
+	public void updateUser(UserVO user, Map<String, Object> param) throws Exception {
+		String email = (String) param.get("email");
+		String username = (String) param.get("username");
+
+		// 이메일 중복 검사
+		if (checkExistUserEmailForUpdate(param)) {
+			throw new Exception("이미 사용 중인 이메일입니다.");
+		}
+
+		String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+		Pattern emailPattern = Pattern.compile(emailRegex);
+		if (!emailPattern.matcher(email).matches()) {
+			throw new Exception("이메일 형식이 잘못되었습니다.");
+		}
+
+		// 사용자 이름 유효성 검사
+		String usernameRegex = "^[a-zA-Z][a-zA-Z0-9-_\\.]{7,19}$";
+		if (!username.matches(usernameRegex)) {
+			throw new Exception("사용자 이름은 첫 글자가 영어여야 하고, 8-20자 사이, 영어, 숫자, -, _, .만 포함할 수 있습니다.");
+		}
+
+		user.setUsername(username);
+		user.setEmail(email);
 		userDAO.updateUser(user);
 	}
 
