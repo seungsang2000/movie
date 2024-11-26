@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
 		}
 
 		// 비밀번호 유효성 검사
-		String passwordRegex = "^[a-zA-Z\\d\\W]{8,20}$";
+		String passwordRegex = "^[a-zA-Z\\d\\W]{7,19}$";
 		if (!password.matches(passwordRegex)) {
 			throw new Exception("비밀번호는 8~20자의 영어, 숫자, 특수문자만 포함해야 합니다.");
 		}

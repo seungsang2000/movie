@@ -6,8 +6,12 @@ import java.util.Map;
 import egovframework.kss.main.dto.MovieSearchResultDTO;
 import egovframework.kss.main.dto.PersonSearchResultDTO;
 import egovframework.kss.main.dto.SingleMovieDTO;
+import egovframework.kss.main.model.Cast;
+import egovframework.kss.main.model.Crew;
+import egovframework.kss.main.model.Genre;
 import egovframework.kss.main.model.Movie;
 import egovframework.kss.main.model.Person;
+import egovframework.kss.main.model.Video;
 
 public interface MovieService {
 
@@ -32,4 +36,12 @@ public interface MovieService {
 	public void addFavorite(SingleMovieDTO movie);
 
 	public void insertMovie(SingleMovieDTO movie);
+
+	public void insertCast(Cast cast);
+
+	public void insertGenre(Genre genre);
+
+	public void insertVideo(Video video);
+
+	public void insertCrew(Crew crew);
 }

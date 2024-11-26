@@ -609,4 +609,28 @@ public class MovieServiceImpl implements MovieService {
 
 	}
 
+	@Override
+	public void insertCast(Cast cast) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void insertGenre(Genre genre) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void insertVideo(Video video) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void insertCrew(Crew crew) {
+		// TODO Auto-generated method stub
+
+	}
+
 }
