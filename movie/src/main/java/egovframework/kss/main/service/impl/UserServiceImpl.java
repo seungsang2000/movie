@@ -9,6 +9,7 @@ import javax.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -199,6 +200,15 @@ public class UserServiceImpl implements UserService {
 		user.setUsername(username);
 		user.setEmail(email);
 		userDAO.updateUser(user);
+
+		// 변경된 사용자 정보를 기반으로 새로운 CustomUserDetails 생성
+		CustomUserDetails updatedUserDetails = new CustomUserDetails(user.getUsername(), user.getPassword(), user.getRole(), user.getImage_path(), user.getId());
+
+		// 새로운 Authentication 객체 생성 (비밀번호는 업데이트된 비밀번호를 사용)
+		Authentication authentication = new UsernamePasswordAuthenticationToken(updatedUserDetails, updatedUserDetails.getPassword(), updatedUserDetails.getAuthorities());
+
+		// SecurityContext에 새로운 Authentication 객체 설정
+		SecurityContextHolder.getContext().setAuthentication(authentication);
 	}
 
 }

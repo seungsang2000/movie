@@ -36,7 +36,7 @@
 				<div class="movie-single-ct main-content">
 					<h1 class="bd-hd">${movie.title}<span>2015</span></h1>
 					<div class="social-btn">
-						<a href="#" class="parent-btn"><i class="ion-heart"></i> Add to Favorite</a>
+						<a href='javascript:void(0);' class="parent-btn" onclick="addFavorite(event)"><i class="ion-heart"></i> Add to Favorite</a>
 					</div>
 					<div class="movie-rate">
 						<div class="rate">
@@ -629,6 +629,31 @@
              
             $("a[href='#cast']").click();
          });
+        
+        function addFavorite(e){
+            $.ajax({
+            	url:"/addFavorite.do",
+            	type: "POST",
+            	data: {
+            	   movie: ${movie} 
+            	},
+            	success: function(response){
+            	    if(response.success){
+            	        alert("선호영화에 추가되었습니다");
+            	        location.reload();
+            	    } else{
+            	        alert(" 선호 영화 추가가 취소되었습니다")
+            	    }
+            	}, 
+                error: function(){
+                    alert("서버 통신 오류가 발생했습니다.");
+                }
+            });
+            
+        }
     });
+    
+    
+    
 </script>
 <%@ include file="/WEB-INF/jsp/include/footer.jsp" %>

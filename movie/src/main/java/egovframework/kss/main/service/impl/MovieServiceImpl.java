@@ -20,7 +20,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import egovframework.kss.main.dao.MovieDAO;
 import egovframework.kss.main.dto.MovieSearchResultDTO;
 import egovframework.kss.main.dto.PersonSearchResultDTO;
 import egovframework.kss.main.dto.SingleMovieDTO;
@@ -31,6 +33,8 @@ import egovframework.kss.main.model.Movie;
 import egovframework.kss.main.model.Person;
 import egovframework.kss.main.model.Video;
 import egovframework.kss.main.service.MovieService;
+import egovframework.kss.main.service.UserService;
+import egovframework.kss.main.vo.UserVO;
 import egovframework.rte.fdl.property.EgovPropertyService;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -41,6 +45,12 @@ public class MovieServiceImpl implements MovieService {
 
 	@Autowired
 	private EgovPropertyService propertiesService;
+
+	@Autowired
+	UserService userService;
+
+	@Autowired
+	MovieDAO movieDAO;
 
 	private static Logger Logger = LoggerFactory.getLogger(MovieServiceImpl.class);
 	private static final OkHttpClient client = new OkHttpClient();
@@ -357,10 +367,10 @@ public class MovieServiceImpl implements MovieService {
 				for (int j = 0; j < max; j++) {
 					JSONObject result = results.getJSONObject(j);
 					Person person = new Person();
-					person.setDepartment(result.getString("known_for_department"));
 					person.setId(result.getInt("id"));
 					person.setImg_url("https://image.tmdb.org/t/p/w185" + result.getString("profile_path"));
 					person.setName(result.getString("name"));
+					person.setDepartment(result.getString("known_for_department"));
 					persons.add(person);
 
 				}
@@ -584,6 +594,19 @@ public class MovieServiceImpl implements MovieService {
 	public PersonSearchResultDTO personSearch(int page, String query) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	@Transactional
+	public void addFavorite(SingleMovieDTO movie) {
+		UserVO user = userService.getCurrentUser();
+		insertMovie(movie);
+
+	}
+
+	@Override
+	public void insertMovie(SingleMovieDTO movie) {
+
 	}
 
 }

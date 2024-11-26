@@ -9,5 +9,6 @@
     <mappers>
         <!-- <mapper class="egovframework.kss.main.mapper.QnAMapper"/> -->
         	<mapper class="egovframework.kss.main.mapper.UserMapper" />
+        	<mapper class="egovframework.kss.main.mapper.MovieMapper" />
     </mappers>
 </configuration>

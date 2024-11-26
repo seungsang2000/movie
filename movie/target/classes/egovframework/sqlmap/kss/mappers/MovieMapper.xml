@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.kss.main.mapper.MovieMapper">
+	<insert id="insertMovie" parameterType="egovframework.kss.main.dto.SingleMovieDTO">
+		insert into movies(id,title,overview,img_url,backdrop_url,release_date,release_date,popularity,runtime,trailer) values(#{id},#{title},#{overview},#{img_url},#{backdrop_url},#{release_date},#{release_date},#{popularity},#{runtime},#{trailer})
+	</insert>
+
+
+
+</mapper>

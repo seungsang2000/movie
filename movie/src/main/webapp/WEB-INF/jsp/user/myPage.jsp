@@ -105,13 +105,7 @@ $(function() {
 
     // 프로필 정보를 업데이트하는 함수
     function updateProfile(e) {
-        e.preventDefault(); // 기본 폼 제출 방지
-
-        // 값 출력하여 제대로 값을 가져오는지 확인
-        console.log("updateUsername:", $("#updateUsername").val());
-        console.log("updateEmail:", $("#updateEmail").val());
-
-        console.log($("#username").length);
+        e.preventDefault();
         
         // 폼 데이터 가져오기
         var updateUsername = $("#updateUsername").val();
@@ -119,7 +113,7 @@ $(function() {
 
         // 프로필 정보 변경 확인
         if (!confirm("프로필 정보를 변경하시겠습니까?")) {
-            return;  // 사용자가 취소하면 아무 일도 일어나지 않음
+            return;
         }
 
         // AJAX 요청 보내기
@@ -133,7 +127,7 @@ $(function() {
             success: function(response) {
                 if (response.success) {
                     alert('프로필 정보가 업데이트되었습니다.');
-                    location.reload(); // 페이지 새로고침
+                    location.reload();
                 } else {
                     alert('프로필 업데이트에 실패했습니다: ' + response.message);
                 }
@@ -144,7 +138,7 @@ $(function() {
         });
     }
     // 폼 제출 이벤트에 대한 처리 (엔터키 처리)
-    $("#userProfileForm").on("submit", updateProfile); // 폼 제출 시 updateProfile 함수 호출
+    $("#userProfileForm").on("submit", updateProfile); 
 });
 
 </script>

@@ -28,4 +28,8 @@ public interface MovieService {
 	public MovieSearchResultDTO movieSearch(int page, String query);
 
 	public PersonSearchResultDTO personSearch(int page, String query);
+
+	public void addFavorite(SingleMovieDTO movie);
+
+	public void insertMovie(SingleMovieDTO movie);
 }

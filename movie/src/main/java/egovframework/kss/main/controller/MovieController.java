@@ -1,12 +1,15 @@
 package egovframework.kss.main.controller;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import egovframework.kss.main.dto.SingleMovieDTO;
 import egovframework.kss.main.service.MovieService;
@@ -27,6 +30,15 @@ public class MovieController {
 		SingleMovieDTO singlemovie = movieService.movieDetail(id, genreMap);
 		model.addAttribute("movie", singlemovie);
 		return "singleMovie";
+	}
+
+	@PostMapping("addFavorite.do")
+	@ResponseBody
+	public Map<String, Object> addFavorite(@RequestParam("movie") SingleMovieDTO movie) {
+		Map<String, Object> response = new HashMap<>();
+		movieService.addFavorite(movie);
+
+		return response;
 	}
 
 }

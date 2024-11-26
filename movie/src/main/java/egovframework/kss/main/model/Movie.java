@@ -13,6 +13,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Movie {
 	private int id;
+	private int runtime;
+	private String trailer;
 	private String title;
 	private String overview;
 	private String img_url;
