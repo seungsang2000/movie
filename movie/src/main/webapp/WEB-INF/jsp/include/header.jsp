@@ -39,6 +39,7 @@
 	<script src="${pageContext.request.contextPath}/js/plugins2.js"></script>
 	<script src="${pageContext.request.contextPath}/js/custom.js"></script>
 	
+	
 	<style>
 	.disabled-btn {
 	    background-color: #d3d3d3 !important; 
@@ -269,17 +270,15 @@
 								<li class="it-last"><a href="blogdetail.html">blog
 										Detail</a></li>
 							</ul></li>
-						<li class="dropdown first"><a
-							class="btn btn-default dropdown-toggle lv1"
-							data-toggle="dropdown" data-hover="dropdown"> community <i
-								class="fa fa-angle-down" aria-hidden="true"></i>
-						</a>
-							<ul class="dropdown-menu level1">
-								<li><a href="userfavoritegrid.html">user favorite grid</a></li>
-								<li><a href="userfavoritelist.html">user favorite list</a></li>
-								<li><a href="userprofile.html">user profile</a></li>
-								<li class="it-last"><a href="userrate.html">user rate</a></li>
-							</ul></li>
+						 <li class="dropdown first">
+							<a href="/map.do"> CINEMA </a>
+								<!-- <ul class="dropdown-menu level1">
+									<li><a href="userfavoritegrid.html">user favorite grid</a></li>
+									<li><a href="userfavoritelist.html">user favorite list</a></li>
+									<li><a href="userprofile.html">user profile</a></li>
+									<li class="it-last"><a href="userrate.html">user rate</a></li>
+								</ul> -->
+						</li>
 					</ul>
 					<ul class="nav navbar-nav flex-child-menu menu-right">
 						<li class="dropdown first"><a
@@ -488,6 +487,24 @@
 	        $("#returnMainPageBtn").on('click', function(){
 	        	    window.loaction.reload();
 	        });
+	        
+    
+	        if (navigator.geolocation) {
+	            navigator.geolocation.getCurrentPosition(
+	                function(position) {
+	                    const latitude = position.coords.latitude;
+	                    const longitude = position.coords.longitude;
+	                    console.log("Latitude:", latitude, "Longitude:", longitude);
+
+	                    // 여기서 지도 API에 좌표를 넘겨서 마커 표시 가능
+	                },
+	                function(error) {
+	                    console.error("Error getting location:", error);
+	                }
+	            );
+	        } else {
+	            console.log("Geolocation is not supported by this browser.");
+	        } 
 	        
 	        
 	        
