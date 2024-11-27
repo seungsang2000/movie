@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Crew {
 	private int person_id;
-	private int cast_id;
+	private String credit_id;
 	private int movie_id;
 	private int order;
 	private String img_url;

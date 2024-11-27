@@ -37,7 +37,7 @@
 	</insert>
 	
 	<insert id="insertCrew" parameterType="egovframework.kss.main.model.Crew">
-		insert into crews (person_id, cast_id, movie_id, "order", department, job) values (#{person_id}, #{cast_id}, #{movie_id}, #{order}, #{department}, #{job})
+		insert into crews (person_id, credit_id, movie_id, "order", department, job) values (#{person_id}, #{credit_id}, #{movie_id}, #{order}, #{department}, #{job})
 		ON CONFLICT(cast_id) DO NOTHING
 	</insert>
 
@@ -59,13 +59,15 @@
 		;
 	    <!-- Crew 배열 처리 -->
 	    <foreach collection="crews" item="crew" separator=";">
-	    	insert into persons (id, img_url, name, department) 
-	    	values (#{crew.person_id}, #{crew.img_url}, #{crew.name}, #{crew.department})
-	    	ON CONFLICT(id) DO NOTHING;
-	    
-	        insert into crews (person_id, cast_id, movie_id, "order", job)
-	        values (#{crew.person_id}, #{crew.cast_id}, #{id}, #{crew.order}, #{crew.job})
-	        ON CONFLICT(cast_id) DO NOTHING
+	    	<if test="crew.department == 'Directing' or crew.department == 'Writing' or crew.department == 'Production'">
+		    	insert into persons (id, img_url, name, department) 
+		    	values (#{crew.person_id}, #{crew.img_url}, #{crew.name}, #{crew.department})
+		    	ON CONFLICT(id) DO NOTHING;
+		    
+		        insert into crews (person_id, credit_id, movie_id, "order", job)
+		        values (#{crew.person_id}, #{crew.credit_id}, #{id}, #{crew.order}, #{crew.job})
+		        ON CONFLICT(credit_id) DO NOTHING
+	        </if>
 	    </foreach>
 		;
 	    <!-- Genre 배열 처리 -->

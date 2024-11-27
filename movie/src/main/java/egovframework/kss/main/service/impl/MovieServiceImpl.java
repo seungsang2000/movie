@@ -460,7 +460,7 @@ public class MovieServiceImpl implements MovieService {
 
 					// 속성 이름과 메소드 매핑
 					Map<String, Consumer<Crew>> propertySetters = new HashMap<>();
-					propertySetters.put("cast_id", c -> c.setCast_id(crewObject.getInt("cast_id")));
+					propertySetters.put("credit_id", c -> c.setCredit_id(crewObject.getString("credit_id")));
 					propertySetters.put("id", c -> c.setPerson_id(crewObject.getInt("id")));
 					propertySetters.put("order", c -> c.setOrder(crewObject.getInt("order")));
 					propertySetters.put("profile_path", c -> c.setImg_url("https://image.tmdb.org/t/p/w300" + crewObject.getString("profile_path")));
