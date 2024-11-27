@@ -36,7 +36,13 @@ public class MovieController {
 	@ResponseBody
 	public Map<String, Object> addFavorite(@RequestParam("movie") SingleMovieDTO movie) {
 		Map<String, Object> response = new HashMap<>();
-		movieService.addFavorite(movie);
+		try {
+			movieService.addFavorite(movie);
+			response.put("success", true);
+		} catch (Exception e) {
+			response.put("success", false);
+			response.put("message", "선호 영화 등록이 실패하였습니다");
+		}
 
 		return response;
 	}

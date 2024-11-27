@@ -592,7 +592,7 @@ public class MovieServiceImpl implements MovieService {
 
 	@Override
 	public PersonSearchResultDTO personSearch(int page, String query) {
-		// TODO Auto-generated method stub
+		// 후에 작성할 것
 		return null;
 	}
 
@@ -602,35 +602,57 @@ public class MovieServiceImpl implements MovieService {
 		UserVO user = userService.getCurrentUser();
 		insertMovie(movie);
 
+		for (Cast cast : movie.getCasts()) {
+			insertCast(cast);
+		}
+
+		Map<String, Object> params = new HashMap<>(); // for문 안에서 일일히 선언하려니 메모리 낭비가 너무 크다;; 그냥 clear쓰고, 문제나면 트랜잭션을 믿자
+
+		for (Genre genre : movie.getGenres()) {
+			params.clear();
+			insertGenre(genre);
+			params.put("movie_id", movie.getId());
+			params.put("genre_id", genre.getId());
+			insertMovieGenre(params);
+		}
+
+		for (Video video : movie.getVideos()) {
+			insertVideo(video);
+		}
+
+		for (Crew crew : movie.getCrews()) {
+			insertCrew(crew);
+		}
 	}
 
 	@Override
 	public void insertMovie(SingleMovieDTO movie) {
-
+		movieDAO.insertMovie(movie);
 	}
 
 	@Override
 	public void insertCast(Cast cast) {
-		// TODO Auto-generated method stub
-
+		movieDAO.insertCast(cast);
 	}
 
 	@Override
 	public void insertGenre(Genre genre) {
-		// TODO Auto-generated method stub
+		movieDAO.insertGenre(genre);
+	}
 
+	@Override
+	public void insertMovieGenre(Map<String, Object> params) {
+		movieDAO.insertMovieGenre(params);
 	}
 
 	@Override
 	public void insertVideo(Video video) {
-		// TODO Auto-generated method stub
-
+		movieDAO.insertVideo(video);
 	}
 
 	@Override
 	public void insertCrew(Crew crew) {
-		// TODO Auto-generated method stub
-
+		movieDAO.insertCrew(crew);
 	}
 
 }

@@ -41,6 +41,8 @@ public interface MovieService {
 
 	public void insertGenre(Genre genre);
 
+	public void insertMovieGenre(Map<String, Object> params);
+
 	public void insertVideo(Video video);
 
 	public void insertCrew(Crew crew);

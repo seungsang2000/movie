@@ -6,6 +6,25 @@
 		insert into movies(id,title,overview,img_url,backdrop_url,release_date,release_date,popularity,runtime,trailer) values(#{id},#{title},#{overview},#{img_url},#{backdrop_url},#{release_date},#{release_date},#{popularity},#{runtime},#{trailer})
 	</insert>
 
+	<insert id="insertCast" parameterType="egovframework.kss.main.model.Cast">
+		insert into casts(person_id, cast_id, movie_id, order, character) values(#{person_id}, #{cast_id}, #{movie_id}, #{order}, #{character})
+	</insert>
+	
+	<insert id="insertGenre" parameterType="egovframework.kss.main.model.Genre">
+		insert into genres(id, name) values (#{id}, #{name})
+	</insert>
+	
+	<insert id="insertMovieGenre" parameterType="map">
+    	INSERT INTO movie_genres (movie_id, genre_id) VALUES (#{movie_id}, #{genre_id})
+	</insert>
+	
+	<insert id="insertVideo" parameterType="egovframework.kss.main.model.Video">
+		insert into videos (id, key, name, site, published_at, movie_id) values (#{id}, #{key}, #{name}, #{site}, #{published_at}, #{movie_id})
+	</insert>
+	
+	<insert id="insertCrew" parameterType="egovframework.kss.main.model.Crew">
+		insert into crews (person_id, cast_id, movie_id, order, department, job) values (#{person_id}, #{cast_id}, #{movie_id}, #{order}, #{department}, #{job})
+	</insert>
 
 
 </mapper>
