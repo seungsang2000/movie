@@ -33,6 +33,8 @@ public interface MovieService {
 
 	public PersonSearchResultDTO personSearch(int page, String query);
 
+	public boolean isFavorite(int id);
+
 	public void addFavorite(SingleMovieDTO movie);
 
 	public void insertMovie(SingleMovieDTO movie);
@@ -46,4 +48,5 @@ public interface MovieService {
 	public void insertVideo(Video video);
 
 	public void insertCrew(Crew crew);
+
 }

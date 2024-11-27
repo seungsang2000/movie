@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -23,21 +24,26 @@ public class MovieController {
 	@Autowired
 	UserService userService;
 
-	@RequestMapping("singleMovie.do")
+	@RequestMapping("/singleMovie.do")
 	public String singleMovie(@RequestParam("id") int id, Model model) {
 
 		Map<Integer, String> genreMap = movieService.fetchGenres(); //장르 id와 이름 가져오기
 		SingleMovieDTO singlemovie = movieService.movieDetail(id, genreMap);
 		model.addAttribute("movie", singlemovie);
+		boolean isFavorite = movieService.isFavorite(id);
+		model.addAttribute("favorite", isFavorite);
 		return "singleMovie";
 	}
 
-	@PostMapping("addFavorite.do")
+	@PostMapping("/addFavorite.do")
 	@ResponseBody
-	public Map<String, Object> addFavorite(@RequestParam("movie") SingleMovieDTO movie) {
+	public Map<String, Object> addFavorite(@RequestBody Map<String, Object> request) {
 		Map<String, Object> response = new HashMap<>();
+		int movieId = (int) request.get("id");
 		try {
-			movieService.addFavorite(movie);
+			Map<Integer, String> genreMap = movieService.fetchGenres(); //장르 id와 이름 가져오기
+			SingleMovieDTO singlemovie = movieService.movieDetail(movieId, genreMap);
+			movieService.addFavorite(singlemovie);
 			response.put("success", true);
 		} catch (Exception e) {
 			response.put("success", false);

@@ -19,6 +19,11 @@ public class MovieDAO {
 	@Autowired
 	SqlSession sqlSession;
 
+	public boolean isFavorite(Map<String, Object> params) {
+		MovieMapper movieMapper = sqlSession.getMapper(MovieMapper.class);
+		return movieMapper.isFavorite(params);
+	}
+
 	public void insertMovie(SingleMovieDTO movie) {
 		MovieMapper movieMapper = sqlSession.getMapper(MovieMapper.class);
 		movieMapper.insertMovie(movie);

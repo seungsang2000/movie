@@ -9,6 +9,7 @@ import javax.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -85,6 +86,14 @@ public class UserServiceImpl implements UserService {
 		} catch (Exception e) {
 			throw new CustomException("유저 정보에 이상이 생겼습니다");
 		}
+	}
+
+	@Override
+	public boolean isUserLoggedIn() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		// 로그인된 사용자인지, 익명 사용자가 아닌지 확인
+		return authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken);
 	}
 
 	@Override

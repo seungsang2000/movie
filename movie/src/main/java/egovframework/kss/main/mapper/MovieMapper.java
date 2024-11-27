@@ -21,4 +21,6 @@ public interface MovieMapper {
 
 	public void insertCrew(Crew crew);
 
+	public boolean isFavorite(Map<String, Object> params);
+
 }

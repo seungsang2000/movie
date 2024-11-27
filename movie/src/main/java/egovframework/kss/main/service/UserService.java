@@ -11,6 +11,8 @@ public interface UserService {
 
 	public UserVO getCurrentUser();
 
+	public boolean isUserLoggedIn();
+
 	Map<String, Object> sendMail(String email);
 
 	public UserVO selectUserByEmail(String email);

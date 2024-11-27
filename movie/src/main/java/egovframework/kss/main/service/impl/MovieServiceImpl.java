@@ -402,6 +402,7 @@ public class MovieServiceImpl implements MovieService {
 				System.out.println(responseBody);
 				JSONObject jsonResponse = new JSONObject(responseBody);
 
+				singleMovie.setId(id);
 				singleMovie.setTitle(jsonResponse.getString("title"));
 				singleMovie.setRuntime(jsonResponse.getInt("runtime"));
 				singleMovie.setOverview(jsonResponse.getString("overview"));
@@ -594,6 +595,21 @@ public class MovieServiceImpl implements MovieService {
 	public PersonSearchResultDTO personSearch(int page, String query) {
 		// 후에 작성할 것
 		return null;
+	}
+
+	@Override
+	public boolean isFavorite(int id) {
+		Map<String, Object> params = new HashMap<>();
+		boolean isFavorite = false;
+
+		if (userService.isUserLoggedIn()) {
+			UserVO user = userService.getCurrentUser();
+			params.put("user_id", user.getId());
+			params.put("movie_id", id);
+			isFavorite = movieDAO.isFavorite(params);
+		}
+
+		return isFavorite;
 	}
 
 	@Override

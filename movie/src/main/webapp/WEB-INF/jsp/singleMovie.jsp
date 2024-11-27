@@ -35,9 +35,11 @@
 			<div class="col-md-8 col-sm-12 col-xs-12">
 				<div class="movie-single-ct main-content">
 					<h1 class="bd-hd">${movie.title}<span>2015</span></h1>
-					<div class="social-btn">
-						<a href='javascript:void(0);' class="parent-btn" onclick="addFavorite(event)"><i class="ion-heart"></i> Add to Favorite</a>
-					</div>
+					<sec:authorize access="isAuthenticated()">
+						<div class="social-btn">
+							<a href='#' class="parent-btn" id="addFavorite"><i class="ion-heart"></i> Add to Favorite</a>
+						</div>
+					</sec:authorize>
 					<div class="movie-rate">
 						<div class="rate">
 							<i class="ion-android-star"></i>
@@ -630,28 +632,37 @@
             $("a[href='#cast']").click();
          });
         
-        function addFavorite(e){
+        $("#addFavorite").click(function(e) {
+            e.preventDefault();
+
+            if (!confirm("선호 작품에 등록하시겠습니까?")) {
+                return;
+            }
+
+            // JSP에서 전달된 movie 객체를 JSON 형식으로 변환
+            var movieId = ${movie.id};
+
+            // AJAX 요청을 보낼 때 JSON.stringify를 사용
             $.ajax({
-            	url:"/addFavorite.do",
-            	type: "POST",
-            	data: {
-            	   movie: ${movie} 
-            	},
-            	success: function(response){
-            	    if(response.success){
-            	        alert("선호영화에 추가되었습니다");
-            	        location.reload();
-            	    } else{
-            	        alert(" 선호 영화 추가가 취소되었습니다")
-            	    }
-            	}, 
-                error: function(){
+                type: "POST",
+                url: "/addFavorite.do", // 요청할 URL
+                contentType: "application/json",
+                data: JSON.stringify({ id : movieId}), // JSON 문자열로 변환
+                success: function(response) {
+                    if (response.success) {
+                        alert("선호영화에 추가되었습니다");
+                        location.reload();
+                    } else {
+                        alert(e.message);
+                    }
+                },
+                error: function() {
                     alert("서버 통신 오류가 발생했습니다.");
                 }
             });
-            
-        }
-    });
+        });
+     });
+
     
     
     

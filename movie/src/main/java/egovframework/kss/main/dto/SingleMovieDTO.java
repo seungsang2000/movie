@@ -26,6 +26,7 @@ public class SingleMovieDTO {
 	private Long popularity;
 	private double vote_average;
 	private int vote_count;
+	private boolean favorite;
 	private Genre[] genres;
 	private Cast[] casts;
 	private Video[] videos;

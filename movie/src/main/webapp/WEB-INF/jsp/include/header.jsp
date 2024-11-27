@@ -488,25 +488,6 @@
 	        	    window.loaction.reload();
 	        });
 	        
-    
-	        if (navigator.geolocation) {
-	            navigator.geolocation.getCurrentPosition(
-	                function(position) {
-	                    const latitude = position.coords.latitude;
-	                    const longitude = position.coords.longitude;
-	                    console.log("Latitude:", latitude, "Longitude:", longitude);
-
-	                    // 여기서 지도 API에 좌표를 넘겨서 마커 표시 가능
-	                },
-	                function(error) {
-	                    console.error("Error getting location:", error);
-	                }
-	            );
-	        } else {
-	            console.log("Geolocation is not supported by this browser.");
-	        } 
-	        
-	        
 	        
 	    });
 	
