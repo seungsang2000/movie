@@ -436,6 +436,7 @@ public class MovieServiceImpl implements MovieService {
 					propertySetters.put("profile_path", c -> c.setImg_url("https://image.tmdb.org/t/p/w300" + castObject.getString("profile_path")));
 					propertySetters.put("name", c -> c.setName(castObject.getString("name")));
 					propertySetters.put("character", c -> c.setCharacter(castObject.getString("character")));
+					propertySetters.put("department", c -> c.setDepartment(castObject.getString("known_for_department")));
 
 					// 속성 설정
 					for (String property : propertySetters.keySet()) {
@@ -613,32 +614,19 @@ public class MovieServiceImpl implements MovieService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor = Exception.class) // 모든 에러에 대해서 롤백
 	public void addFavorite(SingleMovieDTO movie) {
-		UserVO user = userService.getCurrentUser();
-		insertMovie(movie);
 
-		for (Cast cast : movie.getCasts()) {
-			insertCast(cast);
-		}
+		UserVO user = userService.getCurrentUser();
+
+		movieDAO.insertMovieAndRelated(movie);
 
 		Map<String, Object> params = new HashMap<>(); // for문 안에서 일일히 선언하려니 메모리 낭비가 너무 크다;; 그냥 clear쓰고, 문제나면 트랜잭션을 믿자
+		params.put("movie_id", movie.getId());
+		params.put("user_id", user.getId());
 
-		for (Genre genre : movie.getGenres()) {
-			params.clear();
-			insertGenre(genre);
-			params.put("movie_id", movie.getId());
-			params.put("genre_id", genre.getId());
-			insertMovieGenre(params);
-		}
+		movieDAO.insertFavorite(params); // 얘는 어차피 다른 로직에서 쓸일 없다. 굳이 메소드로 분리하지 말고 dao 쓰자
 
-		for (Video video : movie.getVideos()) {
-			insertVideo(video);
-		}
-
-		for (Crew crew : movie.getCrews()) {
-			insertCrew(crew);
-		}
 	}
 
 	@Override
@@ -670,5 +658,4 @@ public class MovieServiceImpl implements MovieService {
 	public void insertCrew(Crew crew) {
 		movieDAO.insertCrew(crew);
 	}
-
 }

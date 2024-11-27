@@ -24,6 +24,11 @@ public class MovieDAO {
 		return movieMapper.isFavorite(params);
 	}
 
+	public void insertFavorite(Map<String, Object> params) {
+		MovieMapper movieMapper = sqlSession.getMapper(MovieMapper.class);
+		movieMapper.insertFavorite(params);
+	}
+
 	public void insertMovie(SingleMovieDTO movie) {
 		MovieMapper movieMapper = sqlSession.getMapper(MovieMapper.class);
 		movieMapper.insertMovie(movie);
@@ -52,6 +57,11 @@ public class MovieDAO {
 	public void insertCrew(Crew crew) {
 		MovieMapper movieMapper = sqlSession.getMapper(MovieMapper.class);
 		movieMapper.insertCrew(crew);
+	}
+
+	public void insertMovieAndRelated(SingleMovieDTO movie) {
+		MovieMapper movieMapper = sqlSession.getMapper(MovieMapper.class);
+		movieMapper.insertMovieAndRelated(movie);
 	}
 
 }

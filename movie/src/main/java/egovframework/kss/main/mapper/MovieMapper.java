@@ -23,4 +23,8 @@ public interface MovieMapper {
 
 	public boolean isFavorite(Map<String, Object> params);
 
+	public void insertFavorite(Map<String, Object> params);
+
+	public void insertMovieAndRelated(SingleMovieDTO movie);
+
 }

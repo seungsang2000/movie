@@ -17,4 +17,5 @@ public class Cast {
 	private String img_url;
 	private String name;
 	private String character;
+	private String department;
 }

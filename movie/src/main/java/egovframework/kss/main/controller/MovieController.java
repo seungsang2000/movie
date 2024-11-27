@@ -3,6 +3,8 @@ package egovframework.kss.main.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +20,9 @@ import egovframework.kss.main.service.UserService;
 
 @Controller
 public class MovieController {
+
+	private static Logger Logger = LoggerFactory.getLogger(MovieController.class);
+
 	@Autowired
 	MovieService movieService;
 
@@ -38,6 +43,7 @@ public class MovieController {
 	@PostMapping("/addFavorite.do")
 	@ResponseBody
 	public Map<String, Object> addFavorite(@RequestBody Map<String, Object> request) {
+		Logger.info("에러 분석 시작");
 		Map<String, Object> response = new HashMap<>();
 		int movieId = (int) request.get("id");
 		try {
@@ -46,6 +52,7 @@ public class MovieController {
 			movieService.addFavorite(singlemovie);
 			response.put("success", true);
 		} catch (Exception e) {
+			Logger.error(e.getMessage());
 			response.put("success", false);
 			response.put("message", "선호 영화 등록이 실패하였습니다");
 		}

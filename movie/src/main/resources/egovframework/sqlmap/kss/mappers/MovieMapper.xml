@@ -5,15 +5,19 @@
 	<select id="isFavorite" parameterType="map" resultType="boolean">
 		select Exists(select 1 from favorites where user_id=#{user_id} and movie_id=#{movie_id})
 	</select>
+	
+	<insert id="insertFavorite" parameterType="map">
+		insert into favorites(user_id, movie_id) values(#{user_id}, #{movie_id})
+	</insert>
 
 
 	<insert id="insertMovie" parameterType="egovframework.kss.main.dto.SingleMovieDTO">
-		insert into movies(id,title,overview,img_url,backdrop_url,release_date,release_date,popularity,runtime,trailer) values(#{id},#{title},#{overview},#{img_url},#{backdrop_url},#{release_date},#{release_date},#{popularity},#{runtime},#{trailer})
+		insert into movies(id,title,overview,img_url,backdrop_url,release_date,popularity,runtime,trailer) values(#{id},#{title},#{overview},#{img_url},#{backdrop_url},#{release_date},#{popularity},#{runtime},#{trailer})
 		ON CONFLICT(id) DO NOTHING
 	</insert>
 
 	<insert id="insertCast" parameterType="egovframework.kss.main.model.Cast">
-		insert into casts(person_id, cast_id, movie_id, order, character) values(#{person_id}, #{cast_id}, #{movie_id}, #{order}, #{character})
+		insert into casts(person_id, cast_id, movie_id, "order", character) values(#{person_id}, #{cast_id}, #{movie_id}, #{order}, #{character})
 		ON CONFLICT(cast_id) DO NOTHING
 	</insert>
 	
@@ -33,9 +37,52 @@
 	</insert>
 	
 	<insert id="insertCrew" parameterType="egovframework.kss.main.model.Crew">
-		insert into crews (person_id, cast_id, movie_id, order, department, job) values (#{person_id}, #{cast_id}, #{movie_id}, #{order}, #{department}, #{job})
+		insert into crews (person_id, cast_id, movie_id, "order", department, job) values (#{person_id}, #{cast_id}, #{movie_id}, #{order}, #{department}, #{job})
 		ON CONFLICT(cast_id) DO NOTHING
 	</insert>
+
+	<insert id="insertMovieAndRelated" parameterType="egovframework.kss.main.dto.SingleMovieDTO">
+	    <!-- Movie 정보를 먼저 insert -->
+	    insert into movies(id,title,overview,img_url,backdrop_url,release_date,popularity,runtime,trailer) values(#{id},#{title},#{overview},#{img_url},#{backdrop_url},#{release_date},#{popularity},#{runtime},#{trailer})
+			ON CONFLICT(id) DO NOTHING;
+	
+	    <!-- Cast 배열 처리 -->
+	    <foreach collection="casts" item="cast" separator=";">
+	    	insert into persons (id, img_url, name, department) 
+	    	values (#{cast.person_id}, #{cast.img_url}, #{cast.name}, #{cast.department})
+	    	ON CONFLICT(id) DO NOTHING;
+	    
+	        insert into casts (person_id, cast_id, movie_id, "order", character)
+	        values (#{cast.person_id}, #{cast.cast_id}, #{id}, #{cast.order}, #{cast.character})
+	        ON CONFLICT(cast_id) DO NOTHING
+	    </foreach>
+		;
+	    <!-- Crew 배열 처리 -->
+	    <foreach collection="crews" item="crew" separator=";">
+	    	insert into persons (id, img_url, name, department) 
+	    	values (#{crew.person_id}, #{crew.img_url}, #{crew.name}, #{crew.department})
+	    	ON CONFLICT(id) DO NOTHING;
+	    
+	        insert into crews (person_id, cast_id, movie_id, "order", job)
+	        values (#{crew.person_id}, #{crew.cast_id}, #{id}, #{crew.order}, #{crew.job})
+	        ON CONFLICT(cast_id) DO NOTHING
+	    </foreach>
+		;
+	    <!-- Genre 배열 처리 -->
+	    <foreach collection="genres" item="genre" separator=";">
+	        insert into genres(id, name) values (#{genre.id}, #{genre.name})
+			ON CONFLICT(id) DO NOTHING
+	    </foreach>
+		;
+	    <!-- Video 배열 처리 -->
+	    <foreach collection="videos" item="video" separator=";">
+	        insert into videos (id, key, name, site, published_at, movie_id) values (#{video.id}, #{video.key}, #{video.name}, #{video.site}, #{video.published_at}, #{id})
+			ON CONFLICT(id) DO NOTHING
+	    </foreach>
+	    ;
+	</insert>
+
+	
 
 
 </mapper>
