@@ -13,7 +13,7 @@ public interface UserMapper {
 
 	public void insertPasswordKey(PasswordKeyDTO passwordKeyDTO);
 
-	public PasswordKeyDTO selectVerifyKey(String key);
+	public PasswordKeyDTO selectVerifyKey(Map<String, Object> params);
 
 	public void deletePasswordKeyByEmail(String tomail);
 
@@ -22,5 +22,7 @@ public interface UserMapper {
 	public boolean checkExistUserEmailForUpdate(Map<String, Object> params);
 
 	public void updateUser(UserVO user);
+
+	public void updateUserPassword(Map<String, Object> params);
 
 }

@@ -140,7 +140,7 @@
 	<!--비밀번호 팝업-->
 	
 	<!-- 임시비밀번호 -->
-	<div class="login-wrapper" id="forgotPassword-content">
+	<div class="login-wrapper" id="tempPassword-content">
 	    <div class="login-content">
 	        <a href="#" class="close">x</a>
 	        <h3>임시비밀번호</h3>
@@ -152,9 +152,9 @@
 	            </label>
 	        </div>
 	        
-	        계정의 비빌번호가 임시 비밀번호로 변경되었습니다. 해당 계정으로 로그인한 후, 비밀번호를 변경해주세요.
+	        	계정의 비빌번호가 임시 비밀번호로 변경되었습니다. 해당 계정으로 로그인한 후, 비밀번호를 변경해주세요.
 	
-	        <!-- 이메일 전송 버튼 -->
+	        
 	        <div class="row" id="returnMainPageBtnRow">
 	            <button type="button" id="returnMainPageBtn">메인 화면으로 돌아가기</button>
 	        </div>
@@ -331,6 +331,24 @@
 
 	
 	<script>
+	var tempPassword = $("#tempPassword");
+	var tempPasswordct = $("#tempPassword-content");
+	
+	 function tempPasswordPopup(){
+	        tempPasswordct.parents(overlay).addClass("openform");
+	        /*$(document).on('mousedown', function(e){ 
+	        var target = $(e.target);
+	        if ($(target).hasClass("overlay")){
+	                $(target).find(forgotPasswordct).each( function(){
+	                    $(this).removeClass("openform");
+	                });
+	                setTimeout( function(){
+	                    $(target).removeClass("openform");
+	                }, 200);
+	            }   
+	        });*/
+	    }
+	
 	function isValidUsername(username){
 	    const regex = /^[a-zA-Z][a-zA-Z0-9-_\.]{7,19}$/;
 	    return regex.test(username);
@@ -464,15 +482,23 @@
 	        // 인증번호 전송 버튼 클릭 (새로 추가된 버튼)
 	        $('#authKeyBtn').on('click', function() {
 	            var authKey = $('#authKey').val();
+	            var email = $('#email').val();
+	            
+	            if(!authKey.trim()){
+	                alert("비밀번호를 입력해주세요");
+	                return;
+	            }
 	
 	            // 인증번호 전송 요청 (예시로 authKey 사용)
 	            $.ajax({
 	                type: 'POST',
 	                url: '/user/verifyAuthKey.do',  // 인증번호 검증 URL
-	                data: { authKey: authKey },
+	                data: { authKey: authKey, email: email },
 	                success: function(response) {
 	                    if (response.success) {
 	                        alert("인증번호가 성공적으로 확인되었습니다.");
+	                        $('#tempPassword').val(response.tempPassword);
+	                        tempPasswordPopup();
 	                    } else {
 	                        alert(response.message || "인증번호 검증에 실패했습니다.");
 	                    }

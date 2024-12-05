@@ -445,9 +445,11 @@ $(function(){
 	var loginLink = $(".loginLink");
 	var signupLink = $(".signupLink");
 	var forgotPassword = $("#forgotPassword");
+	
 	var loginct = $( "#login-content" );
 	var signupct= $("#signup-content");
 	var forgotPasswordct = $("#forgotPassword-content");
+	
 	var loginWrap = $(".login-wrapper");
 	var overlay = $(".overlay");
 	
@@ -487,6 +489,8 @@ $(function(){
             }   
         });
     });
+    
+   
     
     //pop up for signup form
     signupLink.on('click', function(event){

@@ -32,9 +32,9 @@ public class UserDAO {
 
 	}
 
-	public PasswordKeyDTO selectVerifyKey(String key) {
+	public PasswordKeyDTO selectVerifyKey(Map<String, Object> params) {
 		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
-		return userMapper.selectVerifyKey(key);
+		return userMapper.selectVerifyKey(params);
 	}
 
 	public void deletePasswordKeyByEmail(String tomail) {
@@ -56,6 +56,11 @@ public class UserDAO {
 	public void updateUser(UserVO user) {
 		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
 		userMapper.updateUser(user);
+	}
+
+	public void updateUserPassword(Map<String, Object> params) {
+		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+		userMapper.updateUserPassword(params);
 	}
 
 }

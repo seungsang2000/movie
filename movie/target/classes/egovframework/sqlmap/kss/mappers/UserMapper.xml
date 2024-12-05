@@ -14,8 +14,8 @@
 		insert into password_key(email,key) values (#{email},#{key})
 	</insert>
 	
-	<select id="selectVerifyKey" parameterType="String" resultType="egovframework.kss.main.dto.PasswordKeyDTO">
-		select * from password_key where key=#{key}
+	<select id="selectVerifyKey" parameterType="map" resultType="egovframework.kss.main.dto.PasswordKeyDTO">
+		select * from password_key where key=#{key} and email=#{email}
 	</select>
 	
 	<delete id="deletePasswordKeyByEmail" parameterType="String">
@@ -32,6 +32,10 @@
 	
 	<update id="updateUser" parameterType="egovframework.kss.main.vo.UserVO">
 		update users set username=#{username}, email=#{email} where id = #{id} 
+	</update>
+	
+	<update id="updateUserPassword" parameterType="map">
+		update users set password=#{password} where email = #{email}
 	</update>
 	
 </mapper>

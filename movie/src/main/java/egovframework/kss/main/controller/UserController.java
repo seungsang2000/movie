@@ -115,8 +115,8 @@ public class UserController {
 
 	@PostMapping("/verifyAuthKey.do")
 	@ResponseBody
-	public Map<String, Object> verifyAuthKey(@RequestParam String authKey) {
-		Map<String, Object> response = userService.verifyAuthKey(authKey);
+	public Map<String, Object> verifyAuthKey(@RequestParam String authKey, @RequestParam String email) {
+		Map<String, Object> response = userService.verifyAuthKey(authKey, email);
 		return response;
 	}
 

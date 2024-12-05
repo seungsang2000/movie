@@ -17,10 +17,12 @@ public interface UserService {
 
 	public UserVO selectUserByEmail(String email);
 
-	public Map<String, Object> verifyAuthKey(String authKey);
+	public Map<String, Object> verifyAuthKey(String authKey, String email);
 
 	public boolean checkExistUserEmailForUpdate(Map<String, Object> params);
 
 	public void updateUser(UserVO user, Map<String, Object> param) throws Exception;
+
+	public void updateUserPassword(String oldPassword, String newPassword) throws Exception;
 
 }

@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import egovframework.kss.main.dao.UserDAO;
 import egovframework.kss.main.dto.PasswordKeyDTO;
@@ -119,9 +120,9 @@ public class UserServiceImpl implements UserService {
 			MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
 
 			messageHelper.setFrom(setfrom, "영화 리뷰 사이트 운영진");  // 보내는사람 생략하거나 하면 정상작동을 안함 두번째 인자값은 보낼때의 이름이다.
-			messageHelper.setTo(tomail);     // 받는사람 이메일
-			messageHelper.setSubject(title); // 메일제목은 생략이 가능하다
-			messageHelper.setText(content);  // 메일 내용
+			messageHelper.setTo(tomail);
+			messageHelper.setSubject(title);
+			messageHelper.setText(content);
 
 			sender.send(message);
 
@@ -160,13 +161,22 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Map<String, Object> verifyAuthKey(String authKey) {
+	@Transactional
+	public Map<String, Object> verifyAuthKey(String authKey, String email) {
 		Map<String, Object> response = new HashMap<>();
 		try {
-			PasswordKeyDTO passwordKey = userDAO.selectVerifyKey(authKey);
+			Map<String, Object> params = new HashMap<>();
+			params.put("email", email);
+			params.put("key", authKey);
+			PasswordKeyDTO passwordKey = userDAO.selectVerifyKey(params);
 			if (passwordKey != null) {
-				response.put("success", true);
+				String tempPassword = new TempKey().getKey(10, false);
+				String hashedPassword = passwordEncoder.encode(tempPassword);
+				params.put("password", hashedPassword);
+				userDAO.updateUserPassword(params);
 				userDAO.deletePasswordKeyByEmail(passwordKey.getEmail());
+				response.put("success", true);
+				response.put("tempPassword", tempPassword);
 			} else {
 				response.put("success", false);
 				response.put("message", "인증키가 잘못되었습니다.");
@@ -218,6 +228,24 @@ public class UserServiceImpl implements UserService {
 
 		// SecurityContext에 새로운 Authentication 객체 설정
 		SecurityContextHolder.getContext().setAuthentication(authentication);
+	}
+
+	@Override
+	public void updateUserPassword(String oldPassword, String newPassword) throws Exception {
+		UserVO currentUser = getCurrentUser();
+		if (!currentUser.getPassword().equals(oldPassword)) {
+			throw new Exception("비밀번호가 틀렸습니다.");
+		}
+
+		String passwordRegex = "^[a-zA-Z\\d\\W]{7,19}$";
+		if (!newPassword.matches(passwordRegex)) {
+			throw new Exception("비밀번호는 8~20자의 영어, 숫자, 특수문자만 포함해야 합니다.");
+		}
+
+		Map<String, Object> params = new HashMap<>();
+		params.put("email", currentUser.getEmail());
+		params.put("password", newPassword);
+		userDAO.updateUserPassword(params);
 	}
 
 }
