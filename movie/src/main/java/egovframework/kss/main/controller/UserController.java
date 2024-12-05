@@ -149,4 +149,11 @@ public class UserController {
 		return ResponseEntity.ok(response);
 	}
 
+	@RequestMapping("/tempPassword")
+	public String tempPassword(@RequestParam String password, Model model) {
+		model.addAttribute("password", password);
+
+		return "user/tempPasswordPage";
+	}
+
 }

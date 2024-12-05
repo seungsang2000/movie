@@ -331,24 +331,6 @@
 
 	
 	<script>
-	var tempPassword = $("#tempPassword");
-	var tempPasswordct = $("#tempPassword-content");
-	
-	 function tempPasswordPopup(){
-	        tempPasswordct.parents(overlay).addClass("openform");
-	        /*$(document).on('mousedown', function(e){ 
-	        var target = $(e.target);
-	        if ($(target).hasClass("overlay")){
-	                $(target).find(forgotPasswordct).each( function(){
-	                    $(this).removeClass("openform");
-	                });
-	                setTimeout( function(){
-	                    $(target).removeClass("openform");
-	                }, 200);
-	            }   
-	        });*/
-	    }
-	
 	function isValidUsername(username){
 	    const regex = /^[a-zA-Z][a-zA-Z0-9-_\.]{7,19}$/;
 	    return regex.test(username);
@@ -497,8 +479,9 @@
 	                success: function(response) {
 	                    if (response.success) {
 	                        alert("인증번호가 성공적으로 확인되었습니다.");
-	                        $('#tempPassword').val(response.tempPassword);
-	                        tempPasswordPopup();
+	                        window.location.href = "/tempPassword?password="+response.tempPassword;
+	                        //$('#tempPassword').val(response.tempPassword);
+	                        //tempPasswordPopup();
 	                    } else {
 	                        alert(response.message || "인증번호 검증에 실패했습니다.");
 	                    }

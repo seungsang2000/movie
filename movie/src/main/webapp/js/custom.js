@@ -445,11 +445,11 @@ $(function(){
 	var loginLink = $(".loginLink");
 	var signupLink = $(".signupLink");
 	var forgotPassword = $("#forgotPassword");
-	
+	var tempPassword = $("#tempPassword");
 	var loginct = $( "#login-content" );
 	var signupct= $("#signup-content");
 	var forgotPasswordct = $("#forgotPassword-content");
-	
+	var tempPasswordct = $("#tempPassword-content");
 	var loginWrap = $(".login-wrapper");
 	var overlay = $(".overlay");
 	
@@ -490,7 +490,20 @@ $(function(){
         });
     });
     
-   
+    function tempPasswordPopup(){
+        tempPasswordct.parents(overlay).addClass("openform");
+        /*$(document).on('mousedown', function(e){ 
+        var target = $(e.target);
+        if ($(target).hasClass("overlay")){
+                $(target).find(forgotPasswordct).each( function(){
+                    $(this).removeClass("openform");
+                });
+                setTimeout( function(){
+                    $(target).removeClass("openform");
+                }, 200);
+            }   
+        });*/
+    }
     
     //pop up for signup form
     signupLink.on('click', function(event){
