@@ -43,7 +43,7 @@
 				</div>
 			</div>
 			<div class="col-md-9 col-sm-12 col-xs-12">
-				<div class="form-style-1 user-pro" action="#">
+				<div class="form-style-1 user-pro">
 							<form action="#" class="user" id="userProfileForm">
 						    <h4>01. 프로필 세부정보</h4>
 						    <div class="row">
@@ -64,31 +64,31 @@
 						        </div>
 						    </div>    
 						</form>
-						<form action="#" class="password">
-						<h4>02. 비밀번호 변경</h4>
-						<div class="row">
-							<div class="col-md-6 form-it">
-								<label>기존 비밀번호</label>
-								<input type="text" placeholder="**********">
+						<form action="#" class="password" id="changePasswordForm" onsubmit="changePassword(event) ; return false;">
+							<h4>02. 비밀번호 변경</h4>
+							<div class="row">
+								<div class="col-md-6 form-it">
+									<label>기존 비밀번호</label>
+									<input type="text" id="oldPassword" name="oldPassword" placeholder="********" required="required">
+								</div>
 							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-6 form-it">
-								<label>새 비밀번호</label>
-								<input type="text" placeholder="***************">
+							<div class="row">
+								<div class="col-md-6 form-it">
+									<label>새 비밀번호</label>
+									<input type="text" id="newPassword" name="newPassword" placeholder="********" required="required">
+								</div>
 							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-6 form-it">
-								<label>새 비밀번호 확인</label>
-								<input type="text" placeholder="***************">
+							<div class="row">
+								<div class="col-md-6 form-it">
+									<label>새 비밀번호 확인</label>
+									<input type="text" id="confirmPassword" name="confirmPassword" placeholder="********" required="required">
+								</div>
 							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-2">
-								<input class="submit" type="submit" value="비밀번호 변경">
-							</div>
-						</div>	
+							<div class="row">
+								<div class="col-md-2">
+									<input class="submit" type="submit" id="changePasswordBtn" value="비밀번호 변경">
+								</div>
+							</div>	
 					</form>
 				</div>
 			</div>
@@ -102,6 +102,15 @@
 
 
 $(function() {
+    function isValidUsername(username){
+	    const regex = /^[a-zA-Z][a-zA-Z0-9-_\.]{7,19}$/;
+	    return regex.test(username);
+	}
+    
+    function isValidPassword(password){
+	    const regex = /^[a-zA-Z\d\W]{8,20}$/;
+	    return regex.test(password)
+	}
 
     // 프로필 정보를 업데이트하는 함수
     function updateProfile(e) {
@@ -113,6 +122,11 @@ $(function() {
 
         // 프로필 정보 변경 확인
         if (!confirm("프로필 정보를 변경하시겠습니까?")) {
+            return;
+        }
+        
+        if(isValidUsername(updateUsername)){
+            alert("아이디는 영문자로 시작하며 8~20자여야 합니다.");
             return;
         }
 
@@ -137,8 +151,55 @@ $(function() {
             }
         });
     }
-    // 폼 제출 이벤트에 대한 처리 (엔터키 처리)
-    $("#userProfileForm").on("submit", updateProfile); 
+    
+    function changePassword(e){
+        e.preventDefault();
+        var oldPassword = $("#oldPassword").val();
+        var newPassword = $("#newPassword").val();
+        var confirmPassword = $("#confirmPassword").val();
+        
+        if(!confirm("비밀번호를 변경하시겠습니까?")){
+            return;
+        }
+        
+        if(!isValidPassword(newPassword)){
+            alert("'비밀번호는 8~20자로 설정해주세요.")
+            return;
+        }
+        
+        if(newPassword != confirmPassword){
+            alert("비밀번호가 다릅니다.")
+            return;
+        }
+        
+        $.ajax({
+            url: "/user/changePassword.do",
+            type : "POST",
+            data : {
+                oldPassword : oldPassword,
+                newPassword : newPassword,
+                confirmPassword : confirmPassword
+            },
+            success : function(response){
+                 if(response.success){
+                     alert("계정의 비밀번호가 업데이트 되었습니다.");
+                     location.reload();
+                 } else {
+                     alert("문제가 발생했습니다. 원인 : "+response.message);
+                 }
+            },
+            error : function(){
+                alert("서버와의 연결에 문제가 발생했습니다.")
+            }
+        });
+        
+    	// 폼 제출 이벤트에 대한 처리 (엔터키 처리)
+    	$("#userProfileForm").on("submit", updateProfile); 
+    
+    
+        
+        
+    }
 });
 
 </script>

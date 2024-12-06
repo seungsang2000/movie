@@ -443,6 +443,8 @@
 	                    if (response.success) {
 	                        alert("이메일이 성공적으로 전송되었습니다.");
 	                        
+	                        $('#email').attr('readonly',true);
+	                        
 	                        // 인증번호 입력 필드와 버튼을 보이게 함
 	                        $('#authKeyRow').show();
 	                        $('#authKeyBtnRow').show();
@@ -479,7 +481,7 @@
 	                success: function(response) {
 	                    if (response.success) {
 	                        alert("인증번호가 성공적으로 확인되었습니다.");
-	                        window.location.href = "/tempPassword?password="+response.tempPassword;
+	                        window.location.href = "/user/tempPassword.do?password="+response.tempPassword;
 	                        //$('#tempPassword').val(response.tempPassword);
 	                        //tempPasswordPopup();
 	                    } else {

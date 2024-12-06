@@ -233,8 +233,8 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void updateUserPassword(String oldPassword, String newPassword) throws Exception {
 		UserVO currentUser = getCurrentUser();
-		if (!currentUser.getPassword().equals(oldPassword)) {
-			throw new Exception("비밀번호가 틀렸습니다.");
+		if (passwordEncoder.matches(currentUser.getPassword(), oldPassword)) {
+			throw new Exception("기존 비밀번호가 틀렸습니다.");
 		}
 
 		String passwordRegex = "^[a-zA-Z\\d\\W]{7,19}$";
@@ -246,6 +246,7 @@ public class UserServiceImpl implements UserService {
 		params.put("email", currentUser.getEmail());
 		params.put("password", newPassword);
 		userDAO.updateUserPassword(params);
+
 	}
 
 }

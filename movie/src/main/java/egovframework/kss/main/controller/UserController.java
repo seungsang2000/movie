@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
@@ -93,7 +95,6 @@ public class UserController {
 			if (username == null || username.isEmpty()) {
 				throw new Exception("사용자 이름은 필수 입력 항목입니다.");
 			}
-			UserVO user = userService.selectUserByUsername(username);
 
 			//로그인 로직 만들기~~~~~
 			response.put("success", true);
@@ -149,11 +150,45 @@ public class UserController {
 		return ResponseEntity.ok(response);
 	}
 
-	@RequestMapping("/tempPassword")
+	@RequestMapping("/tempPassword.do")
 	public String tempPassword(@RequestParam String password, Model model) {
 		model.addAttribute("password", password);
 
 		return "user/tempPasswordPage";
+	}
+
+	@PostMapping("/changePassword.do")
+	public Map<String, Object> changePassword(HttpServletRequest request) {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			//유효성 검사까지는 컨트롤러 단에서 수행
+			String oldPassword = request.getParameter("oldPassword");
+			String newPassword = request.getParameter("newPassword");
+			String confirmPassword = request.getParameter("confirmPassword");
+
+			if (oldPassword == null || oldPassword.isEmpty()) {
+				throw new Exception("기존 비밀번호가 입력되지 않았습니다.");
+			}
+			if (newPassword == null || newPassword.isEmpty()) {
+				throw new Exception("새 비밀번호가 입력되지 않았습니다.");
+			}
+			if (confirmPassword == null || confirmPassword.isEmpty()) {
+				throw new Exception("비밀번호 확인이 입력되지 않았습니다.");
+			}
+			if (!newPassword.equals(confirmPassword)) {
+				throw new Exception("입력된 비밀번호와 비밀번호 확인이 다릅니다");
+			}
+
+			userService.updateUserPassword(oldPassword, newPassword);
+			response.put("success", true);
+
+		} catch (Exception e) {
+			response.put("success", false);
+			response.put("message", e.getMessage());
+			e.printStackTrace();
+		}
+
+		return response;
 	}
 
 }
