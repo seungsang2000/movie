@@ -16,7 +16,7 @@
 	<div class="container">
 		<div class="row ipad-width">
 			<div class="col-md-12 col-sm-12 col-xs-12">
-				<div class="form-style-1 user-pro" action="#">
+				<div class="form-style-1 user-pro">
 						<h4>01. Profile details</h4>
 						<div class="row">
 							<div class="col-md-12 form-it">

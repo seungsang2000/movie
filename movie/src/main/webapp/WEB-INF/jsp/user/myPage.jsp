@@ -64,7 +64,7 @@
 						        </div>
 						    </div>    
 						</form>
-						<form action="#" class="password" id="changePasswordForm" onsubmit="changePassword(event) ; return false;">
+						<form action="#" class="password" id="changePasswordForm">
 							<h4>02. 비밀번호 변경</h4>
 							<div class="row">
 								<div class="col-md-6 form-it">
@@ -98,8 +98,6 @@
 
 
 <script>
-
-
 
 $(function() {
     function isValidUsername(username){
@@ -193,13 +191,16 @@ $(function() {
             }
         });
         
-    	// 폼 제출 이벤트에 대한 처리 (엔터키 처리)
-    	$("#userProfileForm").on("submit", updateProfile); 
-    
-    
-        
-        
+    	
     }
+    
+ 	// 폼 제출 이벤트에 대한 처리 (엔터키 처리)
+	$("#userProfileForm").on("submit", updateProfile); 
+ 
+ 	// 이벤트처리
+ 	$("#changePasswordForm").on("submit", changePassword);
+ 	
+    
 });
 
 </script>
