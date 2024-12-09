@@ -60,12 +60,4 @@ public class MovieController {
 		return response;
 	}
 
-	@RequestMapping("map.do")
-	public String map(@RequestParam(value = "cinema", required = false) String cinema) {
-		if (cinema != null) {
-			// 후에 시네마 검색하는 로직 쓰기~~
-		}
-		return "map_openLayers";
-	}
-
 }

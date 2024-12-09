@@ -197,10 +197,7 @@
  
         function addBaseLayer(map) {
  
-            // ------------------------------
-            // google layers
-            // ------------------------------
-            // google road
+
             var googleRoadLayer = new ol.layer.Tile({
                 source: new ol.source.XYZ({
                     projection : 'EPSG:3857',
@@ -212,7 +209,7 @@
             });
             map.addLayer(googleRoadLayer);
  
-            // google terrain
+
             var googleTerrainLayer = new ol.layer.Tile({
                 source: new ol.source.XYZ({
                     projection : 'EPSG:3857',
@@ -224,7 +221,7 @@
             });
             map.addLayer(googleTerrainLayer);
  
-            // google altered road
+
             var googleAlteredRoadLayer = new ol.layer.Tile({
                 source: new ol.source.XYZ({
                     projection : 'EPSG:3857',
@@ -236,7 +233,7 @@
             });
             map.addLayer(googleAlteredRoadLayer);
  
-            // google satellite
+
             var googleSatelliteLayer = new ol.layer.Tile({
                 source: new ol.source.XYZ({
                     projection : 'EPSG:3857',
@@ -248,7 +245,7 @@
             });
             map.addLayer(googleSatelliteLayer);
  
-            // google terrain only
+
             var googleTerrainOnlyLayer = new ol.layer.Tile({
                 source: new ol.source.XYZ({
                     projection : 'EPSG:3857',
@@ -260,7 +257,7 @@
             });
             map.addLayer(googleTerrainOnlyLayer);
  
-            // google hybrid
+
             var googleHybridLayer = new ol.layer.Tile({
                 source: new ol.source.XYZ({
                     projection : 'EPSG:3857',
@@ -273,14 +270,7 @@
             map.addLayer(googleHybridLayer);
  
  
-            // ------------------------------
-            // OSM(OpenStreetMap)
-            // ------------------------------
-            // osm standard
-            // var osmStandardLayer = new ol.layer.Tile({
-            //     source: new ol.source.OSM()
-            // });
-            // map.addLayer(osmStandardLayer);
+
             var osmStandardLayer = new ol.layer.Tile({
                 source: new ol.source.XYZ({
                     projection : 'EPSG:3857',
@@ -292,7 +282,7 @@
             });
             map.addLayer(osmStandardLayer);
  
-            // osm cyclosm
+            
             var osmCyclosmLayer = new ol.layer.Tile({
                 source: new ol.source.XYZ({
                     projection : 'EPSG:3857',
@@ -304,7 +294,7 @@
             });
             map.addLayer(osmCyclosmLayer);
  
-            // osm humanitarian
+            
             var osmHumanitarianLayer = new ol.layer.Tile({
                 source: new ol.source.XYZ({
                     projection : 'EPSG:3857',
@@ -316,11 +306,7 @@
             });
             map.addLayer(osmHumanitarianLayer);
  
- 
-            // ------------------------------
-            // vworld layers
-            // ------------------------------
-            // vworld base
+            
             var vworldBaseLayer = new ol.layer.Tile({
                 source: new ol.source.XYZ({
                     projection : 'EPSG:3857',
@@ -332,7 +318,7 @@
             });
             map.addLayer(vworldBaseLayer);
  
-            // vworld satellite
+            
             var vworldSatelliteLayer = new ol.layer.Tile({
                 source: new ol.source.XYZ({
                     projection : 'EPSG:3857',
@@ -344,7 +330,7 @@
             });
             map.addLayer(vworldSatelliteLayer);
  
-            // vworld hybrid
+            
             var vworldHybridLayer = new ol.layer.Tile({
                 source: new ol.source.XYZ({
                     projection : 'EPSG:3857',
@@ -356,7 +342,7 @@
             });
             map.addLayer(vworldHybridLayer);
  
-            // vworld gray
+            
             var vworldGrayLayer = new ol.layer.Tile({
                 source: new ol.source.XYZ({
                     projection : 'EPSG:3857',
@@ -566,7 +552,34 @@
             }
  
             // 좌표 변경 오픈레이어스 이벤트
-             geolocation.on('change', function() {
+            var debounceTimer;
+			geolocation.on('change', function() {
+			    var pos = geolocation.getPosition();
+			
+			    // 위치 추적 시마다 호출되지만, 디바운스를 사용해 호출 간격을 조정
+			    clearTimeout(debounceTimer);  // 이전 타이머를 취소
+			    debounceTimer = setTimeout(function() {
+			     	// 주변 영화관 정보 가져오기
+	                fetchNearbyMovieTheaters(pos);  // 위치 기반 영화관 조회 함수
+			        if ($('#isTrakingLocation').is(':checked') === true) {
+			            if (pos != null) {
+			                map.getView().animate({
+			                    center: pos,
+			                    duration: 500
+			                });
+			
+			                
+			            }
+			        }
+			
+			        if (map.getView().getProjection().getCode() != $('#coordinate').val()) {
+			            pos = ol.proj.transform(pos, map.getView().getProjection().getCode(), $('#coordinate').val());
+			        }
+			
+			        el('position').innerText = pos;
+			    }, 1000);  // 1초 후에 영화관 정보를 요청
+			});
+             /* geolocation.on('change', function() {
  
                 var pos = geolocation.getPosition();
               
@@ -586,7 +599,7 @@
          
                 el('position').innerText = pos;
 
-            }); 
+            });  */
  
             var accuracyFeature = new ol.Feature();
             geolocation.on('change:accuracyGeometry', function() {
@@ -638,7 +651,7 @@
              
           // 벡터 레이어에 클릭 이벤트 리스너 추가
              map.on('singleclick', function(evt) {
-                 var feature = map.forEachFeatureAtPixel(evt.pixel, function(feature) {
+                 var feature = map.forEachFeatureAtPixel(evt.pixel, function(feature) { //forEachFeatureAtPixel은 원래 여러개의 feature를 반환하는 함수이나, 지금은 feature가 한개만 가져다 쓰도록 함
                      return feature;
                  });
 
@@ -657,6 +670,31 @@
              });
  
         }
+          
+        function fetchNearbyMovieTheaters(position) {
+            const apiUrl = '/theaters.do';
+
+            const requestData = {
+                lat: position.latitude,
+                lng: position.longitude
+            };
+
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Nearby movie theaters:", data);
+            })
+            .catch(error => {
+                console.error("Error fetching movie theaters:", error);
+            });
+        }
+
     
     </script>
 

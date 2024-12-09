@@ -3,16 +3,24 @@ package egovframework.kss.main.controller;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import egovframework.kss.main.dto.MovieSearchResultDTO;
 import egovframework.kss.main.exception.CustomException;
 import egovframework.kss.main.model.Movie;
+import egovframework.kss.main.model.MovieTheater;
 import egovframework.kss.main.model.Person;
+import egovframework.kss.main.service.MapService;
 import egovframework.kss.main.service.MovieService;
 
 @Controller
@@ -20,6 +28,9 @@ public class MainController {
 
 	@Autowired
 	MovieService movieService;
+
+	@Autowired
+	MapService mapService;
 
 	@RequestMapping(value = "/main.do")
 	public String mainPage(Model model) {
@@ -65,6 +76,35 @@ public class MainController {
 	public String errorPage(@RequestParam(required = false) String error, Model model) {
 		model.addAttribute("error", error);
 		return "errorPage";
+	}
+
+	@RequestMapping("map.do")
+	public String map(@RequestParam(value = "cinema", required = false) String cinema) {
+		if (cinema != null) {
+			// 후에 시네마 검색하는 로직 쓰기~~
+		}
+		return "map_openLayers";
+	}
+
+	@PostMapping("/theaters.do")
+	@ResponseBody
+	public ResponseEntity<List<MovieTheater>> getNearbyMovieTheaters(HttpServletRequest request) {
+		try {
+			// 클라이언트에서 위도(lat)와 경도(lng) 값 가져오기
+			String lat = request.getParameter("lat");
+			String lng = request.getParameter("lng");
+
+			// Google API에서 영화관 데이터를 가져오는 서비스 호출
+			List<MovieTheater> movieTheaters = mapService.getNearbyMovieTheaters(lat, lng);
+
+			// 영화관 목록 반환
+			return new ResponseEntity<>(movieTheaters, HttpStatus.OK);
+
+		} catch (Exception e) {
+			// 예외 발생 시, 500 오류 반환
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
 	}
 
 }
